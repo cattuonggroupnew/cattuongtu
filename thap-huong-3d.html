@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Cát Tường Tự – Chánh Điện 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/thu-phap.css">
 <style>
   :root{--gold:#d4a73a;--gold-2:#f3d27a;--dark:#120804;--text:#f6ead2;--muted:#c9b38c}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -17,7 +18,7 @@
   .top{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;gap:10px;background:linear-gradient(#000a,transparent);pointer-events:none;z-index:5}
   .top > *{pointer-events:auto}
   .back{border:1px solid #d4a73a66;padding:7px 14px;border-radius:30px;font-size:.85rem;background:#0006}
-  .brand{font-family:'Noto Serif',serif;font-weight:700;color:var(--gold-2);font-size:1.15rem;text-shadow:0 2px 10px #000}
+  .brand{font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;color:var(--gold-2);font-size:1.5rem;text-shadow:0 2px 10px #000}
   .right{display:flex;gap:8px;align-items:center}
   .chip{border:1px solid #d4a73a66;padding:7px 12px;border-radius:30px;font-size:.85rem;background:#0006;color:var(--text);cursor:pointer;font-family:inherit}
 
@@ -39,7 +40,7 @@
   .wish input:focus{outline:none;border-color:var(--gold-2)}
   .wish button{border:0;border-radius:30px;padding:0 18px;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a1d05;font-weight:600;cursor:pointer;font-family:inherit}
 
-  .float{position:fixed;left:50%;top:55%;transform:translate(-50%,0);font-family:'Noto Serif',serif;font-style:italic;color:var(--gold-2);font-size:clamp(1rem,2.6vw,1.4rem);text-shadow:0 0 18px #ff9a2a,0 2px 6px #000;pointer-events:none;z-index:4;text-align:center;width:min(640px,90%);animation:rise 7s ease-out forwards}
+  .float{position:fixed;left:50%;top:55%;transform:translate(-50%,0);font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;color:var(--gold-2);font-size:clamp(1.3rem,3.2vw,1.9rem);text-shadow:0 0 18px #ff9a2a,0 2px 6px #000;pointer-events:none;z-index:4;text-align:center;width:min(640px,90%);animation:rise 7s ease-out forwards}
   @keyframes rise{0%{opacity:0;transform:translate(-50%,20px)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-260px)}}
 
   .toast{position:fixed;left:50%;top:96px;transform:translate(-50%,-20px);opacity:0;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a1d05;padding:10px 22px;border-radius:30px;font-weight:600;font-size:.9rem;z-index:8;transition:.4s;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
@@ -50,12 +51,49 @@
   .intro.hide{opacity:0;pointer-events:none}
   .intro .lotus{font-size:3.4rem;animation:glow 2.5s infinite alternate}
   @keyframes glow{to{filter:drop-shadow(0 0 18px #f3d27a)}}
-  .intro h1{font-family:'Noto Serif',serif;color:var(--gold-2);font-size:clamp(1.8rem,5vw,3rem);margin:10px 0}
+  .intro h1{font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;color:var(--gold-2);font-size:clamp(2.2rem,6vw,3.6rem);margin:10px 0}
   .intro p{color:var(--muted);margin-bottom:28px}
   .intro button{padding:15px 38px;border-radius:40px;border:0;font:600 1.05rem 'Be Vietnam Pro',sans-serif;cursor:pointer;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a1d05;box-shadow:0 8px 30px #d4a73a66}
   .intro small{display:block;margin-top:14px;color:#8a7558}
   #err{position:fixed;inset:0;display:grid;place-items:center;background:var(--dark);z-index:20;padding:24px;text-align:center;color:var(--gold-2)}
   #err[hidden]{display:none}
+
+  /* quẻ xăm */
+  .xam-modal{position:fixed;inset:0;z-index:12;display:grid;place-items:center;padding:16px;background:#000b;opacity:0;transition:opacity .4s}
+  .xam-modal[hidden]{display:none}
+  .xam-modal.show{opacity:1}
+  .xam-card{position:relative;width:min(580px,100%);max-height:calc(100vh - 32px);overflow:auto;background:linear-gradient(#fbf3dc,#f1e2bd);color:#3a1d0b;
+    border:3px solid #b3261e;outline:2px solid #e5b53a;outline-offset:-10px;border-radius:14px;padding:26px 26px 22px;box-shadow:0 20px 60px #000c}
+  .xam-x{position:absolute;top:8px;right:14px;background:none;border:0;font-size:1.9rem;line-height:1;color:#8e1b1b;cursor:pointer}
+  .xam-head{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .xam-stick{width:58px;height:300px;border-radius:6px 6px 3px 3px;background:linear-gradient(90deg,#c99a4e,#ecd08f 45%,#c99a4e);box-shadow:0 8px 16px #0004;
+    display:flex;flex-direction:column;align-items:center;overflow:hidden;animation:stickIn .9s cubic-bezier(.3,1.4,.5,1)}
+  .xam-stick::before{content:"";flex:none;width:100%;height:30px;background:#b3261e}
+  .xam-stick span{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:16px;color:#3a1d0b;line-height:1}
+  .xam-stick b{font-family:'Thu Phap Cat Tuong',cursive;font-weight:400;font-size:1.7rem}
+  .xam-stick em{font-style:normal;font-weight:700;font-size:1.5rem;font-family:'Be Vietnam Pro',sans-serif}
+  @keyframes stickIn{from{transform:translateY(-140px) rotate(-30deg);opacity:0}}
+  .xam-no{font-family:'Thu Phap Cat Tuong',cursive;font-size:2rem;margin-top:10px}
+  .xam-rank{font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;font-size:2.6rem;line-height:1.2;color:#b3261e}
+  [data-rank="Trung"] .xam-rank{color:#a0661a}
+  [data-rank="Hạ"] .xam-rank{color:#4a5a6a}
+  .xam-wait{font-style:italic;color:#7a5a3a;margin-top:4px;animation:breathe 1.6s infinite}
+  @keyframes breathe{50%{opacity:.4}}
+  .reveal .xam-wait{display:none}
+  .xam-body{opacity:0;transform:translateY(14px);transition:opacity .8s,transform .8s}
+  .reveal .xam-body{opacity:1;transform:none}
+  .xam-body h4{font-family:'Thu Phap Cat Tuong',cursive;font-weight:400;font-size:1.6rem;color:#8e1b1b;margin:18px 0 6px;border-bottom:1px solid #d9b46a}
+  .xam-body p{line-height:1.6}
+  .xam-han{font-family:KaiTi,STKaiti,"Microsoft YaHei",serif;font-size:1.3rem;letter-spacing:3px;text-align:center;line-height:1.8}
+  .xam-hv,.xam-poem{text-align:center;font-style:italic;line-height:1.75}
+  .xam-hv{color:#6b4a2a;margin-top:6px}
+  .xam-giai{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+  .xam-giai li{background:#fff8e6;border:1px solid #d9b46a;border-radius:20px;padding:3px 11px;font-size:.88rem}
+  .xam-note{font-size:.8rem;color:#7a5a3a;text-align:center;margin-top:16px}
+  .xam-actions{display:none;gap:10px;justify-content:center;margin-top:16px}
+  .reveal .xam-actions{display:flex}
+  .xam-actions button{padding:10px 22px;border-radius:30px;border:1px solid #d4a73a;cursor:pointer;font:600 .95rem 'Be Vietnam Pro',sans-serif;background:linear-gradient(135deg,#f3d27a,#d4a73a);color:#3a1d05}
+  .xam-actions button.alt{background:#fffaf0}
   @media (max-width:600px){.brand{display:none}.hint{bottom:92px}}
 </style>
 </head>
@@ -69,7 +107,7 @@
 </div>
 <div id="timer"></div>
 <div class="tip" id="tip"></div>
-<div class="hint" id="hint">Kéo để xoay · Cuộn / chụm để phóng to · Chạm vào bát hương, nến, chuông, mõ</div>
+<div class="hint" id="hint">Kéo để xoay · Cuộn / chụm để phóng to · Chạm vào bát hương, ống xăm, chuông, mõ</div>
 
 <form class="wish hidden" id="wish">
   <input id="wishText" maxlength="120" placeholder="Thành tâm khấn nguyện..." autocomplete="off">
@@ -78,15 +116,25 @@
 
 <nav class="bar" id="bar">
   <button class="main" data-act="incense"><b>🔥</b>Thắp hương</button>
-  <button data-act="candles"><b>🕯️</b>Thắp nến</button>
-  <button data-act="hoa"><b>🌸</b>Dâng hoa</button>
-  <button data-act="qua"><b>🍑</b>Dâng quả</button>
-  <button data-act="tra"><b>🍵</b>Dâng trà</button>
+  <button data-act="xam"><b>🎋</b>Xin xăm</button>
   <button data-act="bell"><b>🔔</b>Thỉnh chuông</button>
   <button data-act="mo"><b>🥁</b>Gõ mõ</button>
 </nav>
 
 <div class="toast" id="toast"></div>
+<div class="xam-modal" id="xamModal" hidden>
+  <div class="xam-card" role="dialog" aria-label="Quẻ xăm Quan Âm">
+    <button class="xam-x" id="xamClose" aria-label="Đóng">×</button>
+    <div class="xam-head">
+      <div class="xam-stick"><span id="xamStickNo"></span></div>
+      <div class="xam-no" id="xamNo"></div>
+      <div class="xam-rank" id="xamRank"></div>
+      <div class="xam-wait">Đang giải quẻ…</div>
+    </div>
+    <div class="xam-body" id="xamBody"></div>
+    <div class="xam-actions"><button id="xamAgain">Xin quẻ khác</button><button class="alt" id="xamOk">Đóng</button></div>
+  </div>
+</div>
 <audio id="bgm" src="audio/nhac-nen.mp3" loop preload="auto"></audio>
 
 <div class="intro" id="intro">
@@ -107,6 +155,7 @@
 <script src="lib/three.min.js"></script>
 <script src="lib/OrbitControls.js"></script>
 <script src="lib/RoomEnvironment.js"></script>
+<script src="data/xam-quan-am.js"></script>
 <script>
 (function(){
 const { OrbitControls, RoomEnvironment } = THREE;
@@ -230,43 +279,251 @@ function couplet(words, x){
     const g = c.getContext('2d');
     g.fillStyle = '#6e0d0d'; g.fillRect(0, 0, 128, 900);
     g.strokeStyle = '#e8c25a'; g.lineWidth = 5; g.strokeRect(10, 10, 108, 880);
-    g.fillStyle = '#f3d27a'; g.font = 'bold 30px "Noto Serif", serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    words.forEach((w, i) => g.fillText(w, 64, 110 + i * (680 / (words.length - 1))));
+    g.fillStyle = '#f3d27a'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    words.forEach((w, i) => {
+      g.font = 'bold 44px "Thu Phap Cat Tuong", cursive';
+      const size = Math.min(44, 44 * 96 / g.measureText(w).width);
+      g.font = `bold ${size | 0}px "Thu Phap Cat Tuong", cursive`;
+      g.fillText(w, 64, 110 + i * (680 / (words.length - 1)));
+    });
     t.needsUpdate = true;
   };
-  draw(); if (document.fonts) document.fonts.ready.then(draw);
+  draw(); if (document.fonts) document.fonts.load('bold 44px "Thu Phap Cat Tuong"').then(draw, () => {});
   mesh(new THREE.PlaneGeometry(.5, 3.5), std(0xffffff, { map: t, roughness: .4 }), x, 4.4, 1.2 + .34);
 }
-couplet(['TỪ', 'BI', 'HỶ', 'XẢ'], -4.6);
-couplet(['PHẬT', 'PHÁP', 'NHIỆM', 'MẦU'], 4.6);
+couplet(['Từ', 'Bi', 'Hỷ', 'Xả'], -4.6);
+couplet(['Phật', 'Pháp', 'Nhiệm', 'Mầu'], 4.6);
 
-/* ================= Bàn thờ ================= */
+/* ================= Bàn thờ: án gian gỗ chạm (theo mẫu) ================= */
+// ---- vẽ vân gỗ và chạm khắc lên canvas ----
+function grain(g, w, h, base){
+  g.fillStyle = base; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < w * h / 4000; i++){
+    const y = Math.random() * h, a = .05 + Math.random() * .1;
+    g.strokeStyle = Math.random() < .7 ? `rgba(40,20,8,${a})` : `rgba(255,220,170,${a * .6})`;
+    g.lineWidth = .6 + Math.random() * 2; g.beginPath(); g.moveTo(0, y);
+    for (let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x * .02 + i) * 2.5);
+    g.stroke();
+  }
+}
+// nét chạm nổi: bóng tối lệch xuống → thân gỗ → viền sáng lệch lên
+function carve(g, draw){
+  g.lineCap = g.lineJoin = 'round';
+  g.save(); g.translate(2.5, 3.5); g.strokeStyle = g.fillStyle = 'rgba(60,8,4,.85)'; draw(1); g.restore();
+  g.strokeStyle = g.fillStyle = '#d9a93a'; draw(1);
+  g.save(); g.translate(-1.2, -1.6); g.globalAlpha = .7; g.strokeStyle = g.fillStyle = '#fff2b8'; draw(.4); g.restore();
+}
+function flower(g, x, y, r, m){
+  for (let i = 0; i < 6; i++){ g.beginPath(); g.ellipse(x + Math.cos(i * 1.047) * r * .55, y + Math.sin(i * 1.047) * r * .55, r * .45 * m + .5, r * .28 * m + .5, i * 1.047, 0, 7); g.fill() }
+  g.beginPath(); g.arc(x, y, r * .3 * m + .5, 0, 7); g.fill();
+}
+function vine(g, x0, x1, cy, amp, lw, m){
+  g.lineWidth = lw * m; g.beginPath();
+  for (let i = 0; i <= 60; i++){ const t = i / 60, x = x0 + (x1 - x0) * t, y = cy + Math.sin(t * Math.PI * 3) * amp; i ? g.lineTo(x, y) : g.moveTo(x, y) }
+  g.stroke();
+  for (let i = 1; i < 6; i++){
+    const t = i / 6, x = x0 + (x1 - x0) * t, y = cy + Math.sin(t * Math.PI * 3) * amp, up = Math.cos(t * Math.PI * 3) > 0 ? -1 : 1;
+    g.beginPath(); g.ellipse(x, y + up * amp * .6, amp * .55 * m + .5, amp * .22 * m + .5, (x1 > x0 ? 1 : -1) * .6 * up, 0, 7); g.fill();
+  }
+}
+function knot(g, x, y, s, m){
+  g.lineWidth = Math.max(1, s * .1 * m);
+  for (const k of [.9, .55]) g.strokeRect(x - s * k / 2, y - s * k / 2, s * k, s * k);
+  g.beginPath(); g.moveTo(x - s * .2, y); g.lineTo(x + s * .2, y); g.moveTo(x, y - s * .2); g.lineTo(x, y + s * .2); g.stroke();
+}
+function panel(g, x, y, w, h){
+  g.fillStyle = 'rgba(30,14,4,.35)'; g.fillRect(x, y, w, h);
+  g.lineWidth = 2; g.strokeStyle = 'rgba(242,193,78,.9)'; g.strokeRect(x + 1, y + 1, w - 2, h - 2);
+  g.strokeStyle = 'rgba(20,8,2,.6)'; g.strokeRect(x + 4, y + 4, w - 8, h - 8);
+}
+// diềm: ô chữ triện xen ô hoa lá
+function friezeTexture(w, h, panels){
+  return canvasTex(w, h, g => {
+    grain(g, w, h, '#8a1810');
+    const sq = h * .8, gap = h * .1, longW = (w - gap * 2 - sq * (panels + 1) - gap * 2 * panels) / panels;
+    let x = gap;
+    for (let p = 0; p <= panels; p++){
+      panel(g, x, gap, sq, sq); carve(g, m => knot(g, x + sq / 2, h / 2, sq * .8, m)); x += sq + gap;
+      if (p < panels){
+        panel(g, x, gap, longW, sq); const cx = x + longW / 2, x0 = x;
+        carve(g, m => { vine(g, cx - sq * .5, x0 + 10, h / 2, sq * .2, sq * .09, m); vine(g, cx + sq * .5, x0 + longW - 10, h / 2, sq * .2, sq * .09, m); flower(g, cx, h / 2, sq * .32, m) });
+        x += longW + gap;
+      }
+    }
+  });
+}
+// ba ô hộc chạm hoa
+function drawerTexture(w, h){
+  return canvasTex(w, h, g => {
+    grain(g, w, h, '#8e1a12');
+    const gap = h * .14, ws = [1, 1.6, 1], avail = w - gap * 4; let x = gap;
+    ws.forEach(k => {
+      const pw = avail * k / 3.6, cx = x + pw / 2, cy = h / 2, a = (h - gap * 2) * .22, x0 = x;
+      panel(g, x, gap, pw, h - gap * 2);
+      carve(g, m => { vine(g, cx - a * 1.5, x0 + gap, cy, a, a * .35, m); vine(g, cx + a * 1.5, x0 + pw - gap, cy, a, a * .35, m); flower(g, cx, cy, a * 1.3, m) });
+      x += pw + gap;
+    });
+  });
+}
+// yếm chạm thủng: mây cuốn, nách chân, chữ Thọ tròn
+function apronTexture(w, h){
+  return canvasTex(w, h, g => {
+    const lw = h * .1;
+    carve(g, m => {
+      g.lineWidth = lw * m; g.beginPath(); g.moveTo(lw, lw * .7); g.lineTo(w - lw, lw * .7); g.stroke();
+      for (const side of [1, -1]){
+        g.save(); if (side < 0){ g.translate(w, 0); g.scale(-1, 1) }
+        g.lineWidth = lw * m; g.beginPath(); g.moveTo(lw * .7, lw); g.lineTo(lw * .7, h - lw); g.stroke();
+        g.beginPath(); g.moveTo(lw * .7, h * .85); g.bezierCurveTo(w * .05, h * .7, w * .02, h * .3, w * .12, lw * .9); g.stroke();
+        [[.17, .55, 1], [.29, .42, .85], [.39, .62, .75], [.09, .3, .6], [.46, .28, .5], [.25, .78, .55]].forEach(([fx, fy, k]) => {
+          const cx = w * fx, cy = h * fy, r = h * .18 * k;
+          g.lineWidth = lw * .85 * k * m; g.beginPath();
+          g.moveTo(cx - r * 2.2, cy - r * .6); g.bezierCurveTo(cx - r * 1.4, cy - r * 1.6, cx + r * .4, cy - r * 1.4, cx + r * .5, cy - r * .2);
+          g.arc(cx, cy - r * .2, r * .5, 0, Math.PI * 1.7); g.stroke();
+          g.beginPath(); g.ellipse(cx - r * 1.2, cy + r * .7, r * .55 * m + 1, r * .2 * m + 1, -.5, 0, 7); g.fill();
+        });
+        g.lineWidth = lw * .6 * m; g.beginPath(); g.moveTo(w * .12, lw); g.bezierCurveTo(w * .2, h * .2, w * .3, h * .15, w * .44, h * .35); g.stroke();
+        g.restore();
+      }
+      const cx = w / 2, cy = h * .52, R = h * .34;
+      g.lineWidth = lw * m; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.stroke();
+      g.lineWidth = lw * .55 * m; g.beginPath();
+      for (const dy of [-.45, 0, .45]){ g.moveTo(cx - R * .55, cy + R * dy); g.lineTo(cx + R * .55, cy + R * dy) }
+      g.moveTo(cx, cy - R * .7); g.lineTo(cx, cy + R * .7);
+      g.moveTo(cx - R * .55, cy - R * .45); g.lineTo(cx - R * .55, cy + R * .45);
+      g.moveTo(cx + R * .55, cy - R * .45); g.lineTo(cx + R * .55, cy + R * .45);
+      g.stroke();
+    });
+  });
+}
+// đầu cuốn mây ở góc mặt án
+function cornerTexture(){
+  return canvasTex(256, 160, g => carve(g, m => {
+    g.lineWidth = 18 * m;
+    g.beginPath(); g.moveTo(20, 150); g.lineTo(20, 70); g.bezierCurveTo(20, 20, 90, 10, 120, 40); g.arc(100, 60, 26, -.6, Math.PI * 1.6); g.stroke();
+    g.beginPath(); g.moveTo(20, 140); g.bezierCurveTo(90, 140, 150, 120, 180, 80); g.arc(200, 92, 22, Math.PI, Math.PI * 2.7); g.stroke();
+    g.fillRect(10, 140, 236, 16 * m + 2);
+  }));
+}
+const woodTex = canvasTex(512, 256, (g, w, h) => grain(g, w, h, '#8e1a12'));
+woodTex.wrapS = woodTex.wrapT = THREE.RepeatWrapping;
+const woodM = std(0xffffff, { map: woodTex, roughness: .3, envMapIntensity: .55 });
+const carvedM = (tex, pierced) => {
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return std(0xffffff, { map: tex, bumpMap: tex, bumpScale: .012, roughness: pierced ? .3 : .35, metalness: pierced ? .75 : 0, envMapIntensity: pierced ? 1 : .5,
+    alphaTest: pierced ? .5 : 0, side: pierced ? THREE.DoubleSide : THREE.FrontSide });
+};
+const frontOnly = m => [woodM, woodM, woodM, woodM, m, woodM];
+const friezeM = carvedM(friezeTexture(2048, 100, 3)), drawerM = carvedM(drawerTexture(2048, 116));
+const apronTex = apronTexture(2048, 250), apronM = carvedM(apronTex, true);
+const cornerTex = cornerTexture(), cornerM = carvedM(cornerTex, true);
+// mặt bằng chạm thủng đổ bóng đúng hình hoa văn
+function pierced(geo, mat, tex, x, y, z, parent){
+  const m = mesh(geo, mat, x, y, z, parent);
+  m.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: tex, alphaTest: .5 });
+  return m;
+}
+
 const altar = group(0, 0, -2.2);
-mesh(new THREE.BoxGeometry(4.4, .14, 1.5), M.lacquer, 0, 1.13, 0, altar);
-mesh(new THREE.BoxGeometry(4.5, .05, 1.58), M.gold, 0, 1.04, 0, altar);
-for (const sx of [-1, 1]) for (const sz of [-1, 1]) mesh(new THREE.BoxGeometry(.16, 1.02, .16), M.lacquer, sx * 2.05, .51, sz * .62, altar);
-mesh(new THREE.BoxGeometry(4.1, .62, .04), M.lacquer, 0, .7, .66, altar);
-mesh(new THREE.BoxGeometry(4.1, .06, 1.3), M.lacquer, 0, .22, 0, altar);
-// Diềm chạm hoa văn (ảnh hoa văn của bạn)
-const apronTex = loader.load(src('hoavan', 'images/hoa-van.webp'));
-apronTex.encoding = THREE.sRGBEncoding; apronTex.repeat.set(1, .13); apronTex.offset.set(0, .711);
-mesh(new THREE.PlaneGeometry(3.9, .5), std(0xffffff, { map: apronTex, metalness: .5, roughness: .4, envMapIntensity: .6 }), 0, .72, .685, altar);
-mesh(new THREE.BoxGeometry(4.1, .03, .05), M.gold, 0, .42, .67, altar);
-// Bậc cao phía sau
-mesh(new THREE.BoxGeometry(3.6, .35, .45), M.lacquer, 0, 1.375, -.48, altar);
-mesh(new THREE.BoxGeometry(3.7, .04, .5), M.gold, 0, 1.55, -.48, altar);
+// mặt án, gờ chỉ, hai đầu cuốn
+mesh(new THREE.BoxGeometry(4.6, .08, 1.62), woodM, 0, 1.16, 0, altar);
+mesh(new THREE.BoxGeometry(4.46, .045, 1.54), woodM, 0, 1.0975, 0, altar);
+for (const sx of [-1, 1]) mesh(new THREE.BoxGeometry(.1, .07, 1.62), woodM, sx * 2.27, 1.225, 0, altar);
+mesh(new THREE.BoxGeometry(4.62, .015, 1.64), M.gold, 0, 1.125, 0, altar);
+mesh(new THREE.BoxGeometry(4.24, .015, 1.46), M.gold, 0, .87, 0, altar);
+// diềm chạm dưới mặt án
+mesh(new THREE.BoxGeometry(4.2, .2, 1.42), frontOnly(friezeM), 0, .975, 0, altar);
+// chân vuông có gót
+for (const sx of [-1, 1]) for (const sz of [-1, 1]){
+  mesh(new THREE.BoxGeometry(.15, .875, .15), woodM, sx * 2.03, .4375, sz * .62, altar);
+  mesh(new THREE.BoxGeometry(.19, .06, .19), woodM, sx * 2.03, .03, sz * .62, altar);
+}
+// ô hộc chạm hoa + yếm chạm thủng (trước và sau), yếm hai bên
+mesh(new THREE.BoxGeometry(3.95, .24, .04), frontOnly(drawerM), 0, .75, .645, altar);
+mesh(new THREE.BoxGeometry(3.95, .24, .04), woodM, 0, .75, -.645, altar);
+for (const sx of [-1, 1]) mesh(new THREE.BoxGeometry(.04, .24, 1.09), woodM, sx * 2.0, .75, 0, altar);
+pierced(new THREE.PlaneGeometry(3.95, .48), apronM, apronTex, 0, .39, .655, altar);
+pierced(new THREE.PlaneGeometry(3.95, .48), apronM, apronTex, 0, .39, -.655, altar).rotation.y = Math.PI;
+for (const sx of [-1, 1]) pierced(new THREE.PlaneGeometry(1.09, .3), apronM, apronTex, sx * 2.0, .48, 0, altar).rotation.y = sx * Math.PI / 2;
+// đầu cuốn mây ở bốn góc mặt án
+[[-2.08, -.66], [2.08, -.66], [-2.12, .7], [2.12, .7]].forEach(([x, z]) => {
+  pierced(new THREE.PlaneGeometry(.46, .29), cornerM, cornerTex, x, 1.2 + .145, z, altar).scale.x = x > 0 ? -1 : 1;
+});
+// bệ cao phía sau (đặt bình hoa, đèn nến)
+mesh(new THREE.BoxGeometry(3.6, .33, .45), frontOnly(carvedM(friezeTexture(1600, 140, 4))), 0, 1.38, -.48, altar);
+mesh(new THREE.BoxGeometry(3.72, .04, .52), woodM, 0, 1.55, -.48, altar);
+mesh(new THREE.BoxGeometry(3.66, .03, .5), woodM, 0, 1.215, -.48, altar);
+// bàn thờ thấp phía trước (đặt ống xăm)
+const lowTable = group(0, 0, 1.15, altar);
+mesh(new THREE.BoxGeometry(2.1, .06, .7), woodM, 0, .57, 0, lowTable);
+mesh(new THREE.BoxGeometry(2.02, .04, .64), woodM, 0, .525, 0, lowTable);
+mesh(new THREE.BoxGeometry(1.94, .1, .58), frontOnly(carvedM(friezeTexture(1400, 72, 2))), 0, .455, 0, lowTable);
+for (const sx of [-1, 1]) for (const sz of [-1, 1]){
+  mesh(new THREE.BoxGeometry(.09, .41, .09), woodM, sx * .92, .205, sz * .25, lowTable);
+  mesh(new THREE.BoxGeometry(.12, .05, .12), woodM, sx * .92, .025, sz * .25, lowTable);
+}
+pierced(new THREE.PlaneGeometry(1.75, .22), apronM, apronTex, 0, .3, .275, lowTable);
+pierced(new THREE.PlaneGeometry(1.75, .22), apronM, apronTex, 0, .3, -.275, lowTable).rotation.y = Math.PI;
 
-// Bát hương
+// Lư hương: đỉnh ba chân quỳ mặt lân, thân bầu chạm mây, hai tai mây cuốn (theo mẫu)
 const bowlG = group(0, 1.2, .1, altar);
-bowlG.userData.action = 'incense';
-mesh(new THREE.CylinderGeometry(.22, .26, .07, 40), M.wood, 0, .035, 0, bowlG);
-const bowl = lathe([[0, 0], [.16, 0], [.17, .02], [.13, .05], [.2, .08], [.26, .15], [.285, .24], [.29, .3], [.27, .31], [.26, .29]], M.gold);
-bowl.position.y = .07; bowlG.add(bowl);
-mesh(new THREE.TorusGeometry(.287, .01, 8, 48), std(0x9b1c1c), 0, .07 + .2, 0, bowlG).rotation.x = Math.PI / 2;
-mesh(new THREE.CircleGeometry(.262, 40), std(0x8a8170, { roughness: 1 }), 0, .361, 0, bowlG).rotation.x = -Math.PI / 2;
+bowlG.userData.action = 'incense'; bowlG.scale.setScalar(1.3);
+const censerTex = canvasTex(1024, 256, (g, w, h) => {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#d1a03a'); gr.addColorStop(1, '#a8761c');
+  g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(70,34,4,.35)'; g.fillRect(0, h * .3, w, h * .42);
+  carve(g, m => {
+    g.lineWidth = 4 * m; g.beginPath(); g.moveTo(0, h * .3); g.lineTo(w, h * .3); g.moveTo(0, h * .72); g.lineTo(w, h * .72); g.stroke();
+    for (let i = 0; i < 8; i++){
+      const cx = (i + .5) * w / 8, cy = h * .51, r = h * .09;
+      g.lineWidth = 5 * m; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 1.7); g.stroke();
+      g.beginPath(); g.arc(cx, cy, r * .45, Math.PI, Math.PI * 2.6); g.stroke();
+      g.beginPath(); g.moveTo(cx + r, cy); g.bezierCurveTo(cx + r * 2, cy - r * 1.2, cx + r * 3, cy + r * 1.2, cx + w / 8 - r, cy); g.stroke();
+    }
+  });
+});
+censerTex.wrapS = THREE.RepeatWrapping; censerTex.repeat.set(2, 1);
+const censerM = std(0xffffff, { map: censerTex, bumpMap: censerTex, bumpScale: .01, metalness: .85, roughness: .32, envMapIntensity: 1, side: THREE.DoubleSide });
+// đế tròn
+bowlG.add(lathe([[0, 0], [.25, 0], [.26, .012], [.245, .025], [.25, .055], [.232, .068], [.2, .07], [0, .07]], M.gold));
+mesh(new THREE.TorusGeometry(.248, .008, 8, 48), M.bronze, 0, .04, 0, bowlG).rotation.x = Math.PI / 2;
+// ba chân quỳ mặt lân, đỡ quả cầu
+const eyeM = std(0x3a2008, { roughness: .6 });
+for (let k = 0; k < 3; k++){
+  const a = k * Math.PI * 2 / 3, leg = group(Math.sin(a) * .15, .07, Math.cos(a) * .15, bowlG); leg.rotation.y = a;
+  mesh(new THREE.SphereGeometry(.035, 16, 12), M.gold, 0, .035, 0, leg);
+  mesh(new THREE.CylinderGeometry(.03, .04, .09, 12), M.gold, 0, .11, 0, leg);
+  mesh(new THREE.SphereGeometry(.045, 16, 12), M.gold, 0, .15, .02, leg).scale.set(1, 1.1, .6);
+  for (const sx of [-1, 1]){ mesh(new THREE.SphereGeometry(.009, 8, 6), eyeM, sx * .016, .165, .047, leg); mesh(new THREE.SphereGeometry(.013, 8, 6), M.gold, sx * .02, .182, .04, leg) }
+  mesh(new THREE.SphereGeometry(.012, 8, 6), M.gold, 0, .145, .05, leg);
+}
+// thân bầu + vành miệng
+bowlG.add(lathe([[0, .17], [.11, .17], [.19, .2], [.25, .26], [.275, .32], [.27, .38], [.245, .42], [.235, .435], [.255, .445], [.272, .462], [.262, .478], [.236, .47], [.228, .452], [0, .452]], censerM, 64));
+// ô tròn chạm nổi trước/sau thân
+for (const sz of [1, -1]){
+  const md = group(0, .32, sz * .268, bowlG); md.rotation.y = sz > 0 ? 0 : Math.PI;
+  mesh(new THREE.CylinderGeometry(.065, .065, .014, 32), M.gold, 0, 0, 0, md).rotation.x = Math.PI / 2;
+  mesh(new THREE.TorusGeometry(.064, .007, 8, 40), M.bronze, 0, 0, .008, md);
+  mesh(new THREE.TorusGeometry(.03, .006, 8, 30, Math.PI * 1.6), M.bronze, 0, 0, .009, md);
+}
+// hai tai mây cuốn vươn cao
+function censerEar(side){
+  const g = group(side * .255, .44, 0, bowlG);
+  const curve = new THREE.CatmullRomCurve3([[0, 0], [.06, .06], [.07, .15], [.04, .23]].map(([x, y]) => new THREE.Vector3(side * x, y, 0)));
+  mesh(new THREE.TubeGeometry(curve, 24, .02, 8), M.gold, 0, 0, 0, g);
+  const head = group(side * .04, .29, 0, g);
+  [[0, .03, .055], [-.045, -.005, .04], [.05, -.01, .042], [0, -.045, .032]].forEach(([x, y, r]) => {
+    mesh(new THREE.CylinderGeometry(r, r, .03, 28), M.gold, side * x, y, 0, head).rotation.x = Math.PI / 2;
+    for (const sz of [1, -1]) mesh(new THREE.TorusGeometry(r * .6, .007, 6, 24, Math.PI * 1.6), M.bronze, side * x, y, sz * .017, head);
+  });
+  mesh(new THREE.TorusGeometry(.03, .01, 8, 24, Math.PI * 1.5), M.gold, side * .03, .02, 0, g);
+}
+censerEar(1); censerEar(-1);
+// mặt cát cắm hương
+mesh(new THREE.CircleGeometry(.228, 40), std(0x8a8170, { roughness: 1 }), 0, .453, 0, bowlG).rotation.x = -Math.PI / 2;
 
 // Nén hương
-const sticksG = group(0, .36, 0, bowlG);
+const sticksG = group(0, .453, 0, bowlG);
 const bodyGeo = new THREE.CylinderGeometry(.0065, .0065, .42, 8); bodyGeo.translate(0, .21, 0);
 const stemGeo = new THREE.CylinderGeometry(.004, .004, .24, 6); stemGeo.translate(0, .12, 0);
 const stemMat = std(0xc0392b), bodyMat = std(0x5a2a14, { roughness: .9 });
@@ -294,46 +551,139 @@ function candle(x){
 }
 const candles = [candle(-1.5), candle(1.5)];
 
-// Bình hoa sen
+// Bình hoa: mỗi lần dâng hương cắm một loại hoa khác
 const petalGeo = new THREE.SphereGeometry(.04, 12, 8); petalGeo.scale(.55, 1.25, .22); petalGeo.translate(0, .045, 0);
-const petalMat = std(0xf2a0bd, { roughness: .55, emissive: 0x3a0d18 });
-function lotus(){
+const cucPetalGeo = new THREE.SphereGeometry(.03, 8, 6); cucPetalGeo.scale(.28, 1.3, .2); cucPetalGeo.translate(0, .036, 0);
+const rosePetalGeo = new THREE.SphereGeometry(.035, 10, 8); rosePetalGeo.scale(1, .9, .35); rosePetalGeo.translate(0, .03, 0);
+const budGeo = new THREE.SphereGeometry(.014, 8, 6); budGeo.scale(1, 2.2, 1);
+const leafGeo = new THREE.SphereGeometry(.03, 8, 6); leafGeo.scale(.6, 4, .12); leafGeo.translate(0, .11, 0);
+const flowerStemMat = std(0x3f7a2c), leafMat = std(0x4f8a3a), centerMat = std(0xf4d03f), cucCenterMat = std(0xd98a1a);
+const FLOWER_MAT = {
+  senHong: std(0xf2a0bd, { roughness: .55, emissive: 0x3a0d18 }), senTrang: std(0xf6f2e8, { roughness: .5, emissive: 0x22201a }),
+  cuc: std(0xf2b82e, { roughness: .6, emissive: 0x2a1a00 }), hong: std(0xc81d3a, { roughness: .5, emissive: 0x2a0008 }),
+  hue: std(0xfbf8ee, { roughness: .5, emissive: 0x1a1a14 })
+};
+function lotus(mat){
   const g = new THREE.Group();
   [[8, 0, .75, 1], [6, .5, .35, .8]].forEach(([n, off, tilt, s]) => {
     for (let i = 0; i < n; i++){
       const p = group(0, 0, 0, g); p.rotation.y = (i + off) / n * Math.PI * 2;
-      const m = mesh(petalGeo, petalMat, 0, 0, 0, p); m.rotation.x = tilt; m.scale.setScalar(s);
+      const m = mesh(petalGeo, mat, 0, 0, 0, p); m.rotation.x = tilt; m.scale.setScalar(s);
     }
   });
-  mesh(new THREE.SphereGeometry(.018, 10, 8), std(0xf4d03f), 0, .02, 0, g);
+  mesh(new THREE.SphereGeometry(.018, 10, 8), centerMat, 0, .02, 0, g);
   return g;
+}
+function chrysanthemum(mat){
+  const g = new THREE.Group();
+  [[18, 1.3, 1], [14, .85, .85], [10, .4, .7]].forEach(([n, tilt, s], L) => {
+    for (let i = 0; i < n; i++){
+      const p = group(0, 0, 0, g); p.rotation.y = (i + L * .5) / n * Math.PI * 2;
+      const m = mesh(cucPetalGeo, mat, 0, 0, 0, p); m.rotation.x = tilt; m.scale.setScalar(s);
+    }
+  });
+  mesh(new THREE.SphereGeometry(.014, 8, 6), cucCenterMat, 0, .012, 0, g);
+  return g;
+}
+function rose(mat){
+  const g = new THREE.Group();
+  for (let i = 0; i < 12; i++){
+    const p = group(0, 0, 0, g); p.rotation.y = i * 2.4;
+    const m = mesh(rosePetalGeo, mat, 0, 0, .003 * i, p); m.rotation.x = .12 + i * .07; m.scale.setScalar(.55 + i * .045);
+  }
+  return g;
+}
+const FLOWER_TYPES = {
+  senHong: { name: 'sen hồng', make: () => lotus(FLOWER_MAT.senHong) },
+  senTrang: { name: 'sen trắng', make: () => lotus(FLOWER_MAT.senTrang) },
+  cuc: { name: 'cúc vàng', make: () => chrysanthemum(FLOWER_MAT.cuc) },
+  hong: { name: 'hồng đỏ', make: () => rose(FLOWER_MAT.hong) },
+  hue: { name: 'huệ trắng', tuberose: true }
+};
+const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = arr => arr.map(v => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+// mỗi lần dâng: một loại hoa ngẫu nhiên, khác lần trước
+let lastFlower = null;
+const pickFlowerMix = () => { lastFlower = pickOne(Object.keys(FLOWER_TYPES).filter(k => k !== lastFlower)); return [lastFlower] };
+function fillBouquet(b, mix){
+  b.clear();
+  const n = 5, kinds = shuffle(Array.from({ length: n }, (_, i) => mix[i % mix.length]));
+  for (let i = 0; i < n; i++){
+    const F = FLOWER_TYPES[kinds[i]];
+    const t = i / (n - 1) * 2 - 1, len = .58 - Math.abs(t) * .12 + (i % 2) * .03 + Math.random() * .04;
+    const stem = group(0, 0, 0, b); stem.rotation.z = t * .32 + (Math.random() - .5) * .08; stem.rotation.x = (i % 2 ? .12 : -.06) + (Math.random() - .5) * .1;
+    mesh(new THREE.CylinderGeometry(.005, .006, len, 6), flowerStemMat, 0, len / 2, 0, stem);
+    if (F.tuberose){
+      for (let j = 0; j < 7; j++){ const bud = mesh(budGeo, FLOWER_MAT.hue, (j % 2 ? .011 : -.011), len - j * .034, 0, stem); bud.rotation.z = j % 2 ? -.5 : .5; bud.scale.setScalar(1 - j * .05) }
+    } else { const h = F.make(); h.position.y = len; h.rotation.y = Math.random() * 6; stem.add(h) }
+  }
+  for (const s of [-1, 1]){ mesh(leafGeo, leafMat, s * .03, .02, 0, b).rotation.z = s * .7 }
+  b.traverse(o => { if (o.isMesh) o.castShadow = true });
 }
 function vase(x){
   const g = group(x, 1.57, -.48, altar);
   g.add(lathe([[0, 0], [.07, 0], [.075, .02], [.1, .08], [.115, .16], [.1, .24], [.06, .3], [.045, .36], [.055, .4], [.06, .41]], M.porcelain));
   mesh(new THREE.TorusGeometry(.113, .008, 8, 40), std(0x1f4e9c), 0, .16, 0, g).rotation.x = Math.PI / 2;
   const bouquet = group(0, .38, 0, g);
-  for (let i = 0; i < 3; i++){
-    const len = i === 1 ? .62 : .5;
-    const stem = group(0, 0, 0, bouquet); stem.rotation.z = (i - 1) * .28; stem.rotation.x = i === 1 ? 0 : .1;
-    mesh(new THREE.CylinderGeometry(.006, .006, len, 6), std(0x3f7a2c), 0, len / 2, 0, stem);
-    const l = lotus(); l.position.y = len; stem.add(l);
-  }
   bouquet.visible = false; bouquet.scale.setScalar(.001);
   return bouquet;
 }
 const bouquets = [vase(-.85), vase(.85)];
 
-// Mâm quả
-const fruitGeo = new THREE.SphereGeometry(.05, 16, 12);
-const fruitCols = [0xf28c28, 0xf4d03f, 0xc0392b, 0x8bc34a, 0xf28c28, 0xe74c3c].map(c => std(c, { roughness: .45 }));
+// Mâm quả: mỗi lần dâng một loại quả khác
+const fruitGeo = new THREE.SphereGeometry(.05, 16, 12), smallFruitGeo = new THREE.SphereGeometry(.022, 10, 8);
+const FM = (c, r = .45) => std(c, { roughness: r });
+const FRUIT_MAT = { cam: FM(0xf28c28), quyt: FM(0xf6a01a), le: FM(0xd8c84a), tao: FM(0xc0392b), xanh: FM(0x8bc34a),
+  nho: FM(0x5b2a6e, .3), chuoi: std(0xf7d84a, { roughness: .4, emissive: 0x4a3600 }), thanh: FM(0xd8336b, .5), vay: FM(0x6fae3a), cuong: FM(0x4a3a1a), dao: FM(0xf4a07a), buoi: FM(0xb9cf55) };
+const FRUIT_NAMES = { cam: 'cam', quyt: 'quýt', tao: 'táo', le: 'lê', xanh: 'ổi', dao: 'đào', thanh: 'thanh long', chuoi: 'chuối', nho: 'nho', buoi: 'bưởi' };
+const ROUND_FRUITS = ['cam', 'quyt', 'tao', 'le', 'xanh', 'dao'];
+const CENTER_FRUITS = ['thanh', 'chuoi', 'nho', 'buoi', 'none'];
+function dragonFruit(fr, x, y, z, tilt){
+  const scaleGeo = new THREE.ConeGeometry(.012, .045, 6);
+  const d = group(x, y, z, fr); d.rotation.z = tilt;
+  mesh(fruitGeo, FRUIT_MAT.thanh, 0, 0, 0, d).scale.set(1.25, 1.55, 1.25);
+  for (let i = 0; i < 14; i++){
+    const a = i * 2.4, yy = -.06 + (i / 13) * .13, r = .062 * Math.sqrt(1 - (yy / .085) ** 2) + .004;
+    mesh(scaleGeo, FRUIT_MAT.vay, Math.cos(a) * r, yy, Math.sin(a) * r, d).rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2);
+  }
+}
+function bananaBunch(fr, y){
+  const fingerGeo = new THREE.TorusGeometry(.12, .02, 8, 16, 1.25);
+  for (let i = 0; i < 5; i++){
+    const f = mesh(fingerGeo, FRUIT_MAT.chuoi, -.1, y + i * .014, (i - 2) * .028, fr);
+    f.rotation.set(Math.PI / 2 - .55, 0, -.55 + i * .07);
+  }
+  mesh(new THREE.BoxGeometry(.03, .03, .1), FRUIT_MAT.cuong, -.1, y + .02, 0, fr);
+}
+function grapeCluster(fr, R, y){
+  for (let i = 0; i < 34; i++){
+    const a = i * 2.4, r = R * Math.sqrt((i + .5) / 34);
+    mesh(smallFruitGeo, FRUIT_MAT.nho, Math.cos(a) * r, y + (R - r) * .9, Math.sin(a) * r, fr);
+  }
+  mesh(new THREE.CylinderGeometry(.004, .004, .06, 5), FRUIT_MAT.cuong, 0, y + R + .03, 0, fr).rotation.z = .4;
+}
+// mâm quả trộn ngẫu nhiên: vòng quả tròn + một thứ nổi bật ở giữa
+function fillPlate(fr, used){
+  fr.clear();
+  const round = () => { const k = pickOne(ROUND_FRUITS); used.add(k); return FRUIT_MAT[k] };
+  for (let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2; mesh(fruitGeo, round(), Math.cos(a) * .095, .045, Math.sin(a) * .095, fr).scale.setScalar(.85 + Math.random() * .2) }
+  const c = pickOne(CENTER_FRUITS);
+  if (c === 'none'){
+    for (let i = 0; i < 3; i++){ const a = i / 3 * Math.PI * 2 + .5; mesh(fruitGeo, round(), Math.cos(a) * .05, .12, Math.sin(a) * .05, fr) }
+    mesh(fruitGeo, round(), 0, .19, 0, fr);
+  } else {
+    used.add(c);
+    if (c === 'thanh') dragonFruit(fr, 0, .15, 0, (Math.random() - .5) * .4);
+    if (c === 'chuoi') bananaBunch(fr, .09);
+    if (c === 'nho') grapeCluster(fr, .085, .09);
+    if (c === 'buoi'){ mesh(fruitGeo, FRUIT_MAT.buoi, 0, .15, 0, fr).scale.setScalar(1.6); mesh(leafGeo, leafMat, .03, .22, 0, fr).rotation.z = -1.1 }
+  }
+  fr.traverse(o => { if (o.isMesh) o.castShadow = true });
+}
 function plate(x){
   const g = group(x, 1.2, .4, altar);
   g.add(lathe([[0, 0], [.07, 0], [.05, .02], [.035, .07], [.06, .09], [.17, .11], [.19, .13], [.17, .125], [0, .1]], M.gold));
   const fr = group(0, .11, 0, g);
-  for (let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2; mesh(fruitGeo, fruitCols[i], Math.cos(a) * .095, .045, Math.sin(a) * .095, fr) }
-  for (let i = 0; i < 3; i++){ const a = i / 3 * Math.PI * 2 + .5; mesh(fruitGeo, fruitCols[(i + 2) % 6], Math.cos(a) * .05, .12, Math.sin(a) * .05, fr) }
-  mesh(fruitGeo, fruitCols[0], 0, .19, 0, fr);
   fr.visible = false; fr.scale.setScalar(.001);
   return fr;
 }
@@ -367,6 +717,25 @@ const moG = stool(-2.75); moG.userData.action = 'mo';
 const moMesh = mesh(new THREE.SphereGeometry(.19, 32, 20), std(0x7a3e16, { roughness: .4 }), 0, .6, 0, moG);
 moMesh.scale.set(1.15, .8, 1);
 mesh(new THREE.TorusGeometry(.1, .012, 8, 24, Math.PI), std(0x2a1005), 0, .58, .17, moG).rotation.z = Math.PI;
+
+/* ================= Ống xăm (chính giữa, dưới bàn thờ) ================= */
+// ống xăm đặt trên bàn thờ thấp (mặt bàn cao .6)
+const xamG = group(0, .6, -1.05); xamG.userData.action = 'xam'; xamG.scale.setScalar(1.3);
+const tube = group(0, 0, 0, xamG);
+mesh(new THREE.CylinderGeometry(.085, .078, .34, 28, 1, true), std(0xc9a15a, { roughness: .55, side: THREE.DoubleSide }), 0, .17, 0, tube);
+mesh(new THREE.CircleGeometry(.078, 28), std(0x7a5a28), 0, .01, 0, tube).rotation.x = -Math.PI / 2;
+mesh(new THREE.CylinderGeometry(.0865, .0865, .07, 28, 1, true), std(0xb3261e, { roughness: .5 }), 0, .17, 0, tube);
+[.05, .29].forEach(y => { mesh(new THREE.TorusGeometry(.086, .007, 8, 40), M.gold, 0, y, 0, tube).rotation.x = Math.PI / 2 });
+const xamStickGeo = new THREE.BoxGeometry(.014, .44, .004); xamStickGeo.translate(0, .22, 0);
+const xamTipGeo = new THREE.BoxGeometry(.015, .05, .005);
+const xamStickMat = std(0xe0bd78, { roughness: .6 }), xamTipMat = std(0xb3261e);
+const xamSticks = Array.from({ length: 24 }, (_, i) => {
+  const a = i * 2.4, r = .012 + .052 * Math.sqrt((i + .5) / 24), x = Math.cos(a) * r, z = Math.sin(a) * r;
+  const s = group(x, .02, z, tube); s.rotation.set(z * 1.8, 0, -x * 1.8);
+  mesh(xamStickGeo, xamStickMat, 0, 0, 0, s); mesh(xamTipGeo, xamTipMat, 0, .415, 0, s);
+  s.userData.p0 = s.position.clone(); s.userData.r0 = s.rotation.clone();
+  return s;
+});
 
 /* ================= Đèn lồng ================= */
 const lanterns = [[-2.8, 5.6, -.5], [2.8, 5.6, -.5], [-3, 5.9, 2.6], [3, 5.9, 2.6]].map(([x, y, z], i) => {
@@ -417,15 +786,44 @@ function bellSound(vol = .25){
     o.connect(v).connect(out); o.start(now); o.stop(now + d);
   });
 }
+// Tiếng mõ gỗ: tiếng gõ "tách" + thân gỗ "cốc" + cộng hưởng bụng rỗng + chút vang chánh điện
+function noiseBuffer(a, sec){
+  const buf = a.createBuffer(1, Math.floor(a.sampleRate * sec), a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  return buf;
+}
+let moVerb = null;
 function moSound(){
   const a = audio(); if (!a) return;
-  const now = a.currentTime;
-  [[720, .6], [1180, .25]].forEach(([f, g]) => {
-    const o = a.createOscillator(), v = a.createGain(); o.type = 'triangle';
-    o.frequency.setValueAtTime(f, now); o.frequency.exponentialRampToValueAtTime(f * .85, now + .12);
-    v.gain.setValueAtTime(g, now); v.gain.exponentialRampToValueAtTime(.0001, now + .18);
-    o.connect(v).connect(a.destination); o.start(now); o.stop(now + .2);
+  const now = a.currentTime, f0 = 370 * (1 + (Math.random() - .5) * .06);
+  // bus chung: lọc bớt chói + vang ngắn
+  const out = a.createGain(); out.gain.value = .9;
+  const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200;
+  out.connect(lp).connect(a.destination);
+  if (!moVerb){
+    const d = a.createDelay(), fb = a.createGain(), damp = a.createBiquadFilter(), wet = a.createGain();
+    d.delayTime.value = .075; fb.gain.value = .32; damp.type = 'lowpass'; damp.frequency.value = 1400; wet.gain.value = .35;
+    d.connect(damp).connect(fb).connect(d); damp.connect(wet).connect(a.destination);
+    moVerb = d;
+  }
+  lp.connect(moVerb);
+  // 1) tiếng dùi chạm gỗ
+  const click = a.createBufferSource(), cf = a.createBiquadFilter(), cg = a.createGain();
+  click.buffer = noiseBuffer(a, .02); cf.type = 'bandpass'; cf.frequency.value = 2600; cf.Q.value = 1.2;
+  cg.gain.setValueAtTime(.55, now); cg.gain.exponentialRampToValueAtTime(.001, now + .012);
+  click.connect(cf).connect(cg).connect(out); click.start(now);
+  // 2) thân gỗ: âm chính hơi chùng xuống + một mode cao tắt nhanh
+  [[f0, .8, .22, .92], [f0 * 2.32, .22, .07, .97], [f0 * 3.9, .08, .035, 1]].forEach(([f, gain, dec, bend]) => {
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(f * 1.04, now); o.frequency.exponentialRampToValueAtTime(f * bend, now + .09);
+    g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(gain, now + .002); g.gain.exponentialRampToValueAtTime(.0001, now + dec);
+    o.connect(g).connect(out); o.start(now); o.stop(now + dec + .02);
   });
+  // 3) cộng hưởng bụng rỗng: tiếng ồn lọc hẹp quanh âm chính
+  const body = a.createBufferSource(), bf = a.createBiquadFilter(), bg = a.createGain();
+  body.buffer = noiseBuffer(a, .3); bf.type = 'bandpass'; bf.frequency.value = f0 * .98; bf.Q.value = 14;
+  bg.gain.setValueAtTime(1.6, now); bg.gain.exponentialRampToValueAtTime(.001, now + .26);
+  body.connect(bf).connect(bg).connect(out); body.start(now); body.stop(now + .3);
 }
 // Nhạc nền (bắt đầu khi bấm "Vào chánh điện"; nút loa tắt cả nhạc và chuông)
 const bgm = $('#bgm');
@@ -465,24 +863,23 @@ function lightIncense(){
 }
 
 function setCandle(c, on){ c.lit = on }
-function syncButtons(){
-  document.querySelector('[data-act="candles"]').classList.toggle('on', candles.some(c => c.lit));
-  for (const k in offers) document.querySelector(`[data-act="${k}"]`).classList.toggle('on', offers[k].on);
-}
 
-const offers = {
-  hoa: { objs: bouquets, on: false, msg: 'Dâng hoa sen cúng dường Tam Bảo ☸' },
-  qua: { objs: plates, on: false, msg: 'Dâng mâm ngũ quả 🍑' },
-  tra: { objs: [tea], on: false, msg: 'Dâng chén trà thơm 🍵' },
-};
-function toggleOffer(k){
-  const o = offers[k]; o.on = !o.on;
-  o.objs.forEach(ob => {
-    if (o.on){ ob.visible = true; tween(.8, e => ob.scale.setScalar(Math.max(.001, easeOut(e)))) }
-    else tween(.4, e => ob.scale.setScalar(Math.max(.001, 1 - e)), () => ob.visible = false);
-  });
-  if (o.on) toast(o.msg);
-  syncButtons();
+// Dâng lễ: hoa → quả → trà → nến → cuối cùng thắp hương. Hoa quả trộn ngẫu nhiên mỗi lần.
+let offering = false;
+const popIn = o => { o.visible = true; o.scale.setScalar(.001); tween(.8, k => o.scale.setScalar(Math.max(.001, easeOut(k)))) };
+function startOffering(){
+  if (inc.state === 'burning') return toast('Hương đang cháy — xin thành tâm khấn nguyện 🙏');
+  if (offering) return;
+  offering = true;
+  const mix = pickFlowerMix(), used = new Set();
+  const old = [...bouquets, ...plates, tea].filter(o => o.visible);
+  old.forEach(o => tween(.35, k => o.scale.setScalar(Math.max(.001, 1 - k)), () => { o.visible = false }));
+  const t0 = old.length ? 450 : 0;
+  setTimeout(() => { bouquets.forEach(b => { fillBouquet(b, mix); popIn(b) }); toast('Dâng hoa ' + mix.map(k => FLOWER_TYPES[k].name).join(', ') + ' 🌸') }, t0);
+  setTimeout(() => { plates.forEach(p => { fillPlate(p, used); popIn(p) }); toast('Dâng mâm quả: ' + [...used].map(k => FRUIT_NAMES[k]).join(', ') + ' 🍑') }, t0 + 1200);
+  setTimeout(() => { popIn(tea); toast('Dâng chén trà thơm 🍵') }, t0 + 2400);
+  setTimeout(() => { candles.forEach(c => setCandle(c, true)); toast('Thắp đèn nến sáng tỏ 🕯️') }, t0 + 3500);
+  setTimeout(() => { offering = false; lightIncense() }, t0 + 4600);
 }
 
 function ringBell(){
@@ -495,22 +892,143 @@ function knockMo(){
   tween(.25, k => { const s = 1 + .08 * Math.sin(k * Math.PI); moMesh.scale.set(1.15 * s, .8 / s, s) });
 }
 
+/* ---------- Xin xăm Quan Âm ---------- */
+function parseXam(raw){
+  const out = {};
+  const parts = raw.split(/(?:XĂM\s+)?S[ỐốÔô]\s*(\d{1,3})(?=\s)/u);
+  for (let i = 1; i < parts.length; i += 2){
+    const n = +parts[i];
+    if (n >= 1 && n <= 100 && !out[n]) out[n] = parseOneXam(n, parts[i + 1]);
+  }
+  return out;
+}
+function parseOneXam(n, s){
+  s = s.replace(/-{3,}\*+-{3,}/g, ' ').replace(/\s+/g, ' ').trim();
+  const first = s.search(/[㄀-ㄯ゠-ヿ㐀-鿿豈-﫿]/);
+  const head = s.slice(0, Math.max(0, first)).toLowerCase();
+  const rank = head.includes('thượng') ? 'Thượng' : head.includes('hạ') ? 'Hạ' : head.includes('trung') ? 'Trung' : 'Thượng';
+  let j = first;
+  while (j < s.length && !/[A-Za-zÀ-ỹĐđ]/.test(s[j])) j++;
+  const han = s.slice(first, j).trim(), rest = s.slice(j);
+  // phần thơ: Hán Việt + Dịch nằm trước "Lời bàn"
+  const mL = /Lời\s*bàn/iu.exec(rest);
+  const pre = mL ? rest.slice(0, mL.index) : rest, post = mL ? rest.slice(mL.index + mL[0].length) : '';
+  const mHV = /^(Chữ\s+)?Hán\s*việt\s*/iu.exec(pre), mD = /(^|\s)dịch(?=\s)/iu.exec(pre);
+  const hv = pre.slice(mHV ? mHV[0].length : 0, mD ? mD.index : undefined).trim();
+  const dich = mD ? pre.slice(mD.index + mD[0].length).trim() : '';
+  // phần sau: Lời bàn → Điềm quẻ ứng → Tích cổ → Giải
+  const keys = [['diem', /Đi[ềê]m\s*\S+\s*ứng/iu], ['tich', /Tích\s*cổ\s*:?/iu], ['giai', /(^|\s)giải(?=\s)/iu]];
+  const found = []; let from = 0;
+  for (const [k, re] of keys){
+    const m = re.exec(post.slice(from));
+    if (m){ found.push({k, i: from + m.index, end: from + m.index + m[0].length}); from += m.index + m[0].length }
+  }
+  const f = { loiban: post.slice(0, found.length ? found[0].i : undefined) };
+  found.forEach((m, idx) => { f[m.k] = post.slice(m.end, idx + 1 < found.length ? found[idx + 1].i : undefined) });
+  for (const k in f) f[k] = f[k].trim().replace(/^[:.\s]+/, '');
+  // thiếu chữ "Giải": tách phần "Gia đạo..." ra khỏi Tích cổ
+  if (!f.giai && f.tich){ const g = f.tich.search(/\sGia\s*đạo/u); if (g > 0){ f.giai = f.tich.slice(g).trim(); f.tich = f.tich.slice(0, g).trim() } }
+  return { n, rank, han, hv, dich, loiban: f.loiban || '', diem: f.diem || '', tich: f.tich || '',
+           giai: (f.giai || '').split(/[,;.]\s*/).map(x => x.trim()).filter(Boolean) };
+}
+const XAM = window.XAM_RAW ? parseXam(window.XAM_RAW) : {};
+for (const n in window.XAM_FIX || {}) if (XAM[n]) Object.assign(XAM[n], window.XAM_FIX[n]);
+const escHtml = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// thơ thất ngôn tứ tuyệt: chia thành 4 câu
+function verse(text){
+  const byPunct = text.split(/[,.]\s*/).filter(Boolean);
+  if (byPunct.length === 4) return byPunct;
+  const w = text.split(' ');
+  if (w.length < 20 || w.length > 36) return [text];
+  const per = w.length / 4; return [0, 1, 2, 3].map(i => w.slice(Math.round(i * per), Math.round((i + 1) * per)).join(' '));
+}
+function xamHtml(q){
+  const lines = arr => arr.map(escHtml).join('<br>'), sec = (t, body) => body ? `<h4>${t}</h4>${body}` : '';
+  return sec('Thơ quẻ', `<div class="xam-han">${lines(q.han.split(' '))}</div><div class="xam-hv">${lines(verse(q.hv))}</div>`)
+    + sec('Dịch thơ', q.dich && `<div class="xam-poem">${lines(verse(q.dich))}</div>`)
+    + sec('Lời bàn', q.loiban && `<p>${escHtml(q.loiban)}</p>`)
+    + sec('Điềm quẻ', q.diem && `<p>${escHtml(q.diem)}</p>`)
+    + sec('Tích cổ', q.tich && `<p>${escHtml(q.tich)}</p>`)
+    + sec('Giải quẻ', q.giai.length && `<ul class="xam-giai">${q.giai.map(g => `<li>${escHtml(g)}</li>`).join('')}</ul>`)
+    + '<p class="xam-note">Quẻ xăm chỉ để tham khảo — tâm thiện thì phúc tự đến 🙏</p>';
+}
+function rattleSound(dur = 1.4){
+  const a = audio(); if (!a) return;
+  const now = a.currentTime, len = Math.floor(a.sampleRate * .03);
+  for (let t = 0; t < dur; t += .06 + Math.random() * .05){
+    const buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 4);
+    const src = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain();
+    src.buffer = buf; bp.type = 'bandpass'; bp.frequency.value = 1800 + Math.random() * 1400; bp.Q.value = 4; g.gain.value = .7;
+    src.connect(bp).connect(g).connect(a.destination); src.start(now + t);
+  }
+}
+let xamBusy = false, xamStick = null, xamTimer = 0;
+function drawXam(){
+  if (xamBusy) return;
+  if (!XAM[1]) return toast('Chưa tải được dữ liệu quẻ xăm');
+  // phải dâng hương xong mới được xin xăm
+  if (offering) return toast('Đang dâng lễ — đợi hương được thắp rồi hãy xin xăm 🙏');
+  if (inc.state === 'idle'){
+    const b = document.querySelector('[data-act="incense"]');
+    b.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.15)' }, { transform: 'scale(1)' }], { duration: 500, iterations: 3 });
+    return toast('Xin hãy thắp hương lễ Phật trước khi xin xăm 🙏');
+  }
+  xamBusy = true;
+  toast('Thành tâm khấn nguyện điều muốn hỏi… 🙏');
+  rattleSound();
+  tween(1.5, k => { tube.rotation.x = Math.sin(k * 38) * .28 * (1 - k * .4); tube.rotation.z = Math.sin(k * 29) * .08 * (1 - k) }, () => {
+    tube.rotation.set(0, 0, 0);
+    const n = 1 + crypto.getRandomValues(new Uint32Array(1))[0] % 100;
+    const st = xamStick = xamSticks[Math.floor(Math.random() * xamSticks.length)], y0 = st.position.y, rx0 = st.rotation.x;
+    tween(.5, k => { st.position.y = y0 + .24 * easeOut(k) }, () => {
+      tween(.45, k => { st.rotation.x = rx0 + 1.2 * k; st.position.z = st.userData.p0.z + .14 * k; st.position.y = y0 + .24 - .1 * k }, () => {
+        moSound();
+        setTimeout(() => showXam(XAM[n]), 350);
+      });
+    });
+  });
+}
+function showXam(q){
+  const m = $('#xamModal');
+  m.dataset.rank = q.rank; m.classList.remove('reveal', 'show'); m.hidden = false;
+  $('#xamStickNo').innerHTML = '<b>Số</b><em>' + q.n + '</em>';
+  $('#xamNo').textContent = 'Quẻ số ' + q.n;
+  $('#xamRank').textContent = q.rank + ' xăm';
+  $('#xamBody').innerHTML = '';
+  const stick = m.querySelector('.xam-stick'); stick.style.animation = 'none'; stick.offsetHeight; stick.style.animation = '';
+  requestAnimationFrame(() => m.classList.add('show'));
+  bellSound(.15);
+  clearTimeout(xamTimer);
+  xamTimer = setTimeout(() => { $('#xamBody').innerHTML = xamHtml(q); m.classList.add('reveal') }, 1800);
+}
+function closeXam(){
+  clearTimeout(xamTimer);
+  const m = $('#xamModal'); m.classList.remove('show');
+  setTimeout(() => { m.hidden = true }, 400);
+  if (xamStick){ xamStick.position.copy(xamStick.userData.p0); xamStick.rotation.copy(xamStick.userData.r0); xamStick = null }
+  xamBusy = false;
+}
+$('#xamClose').onclick = $('#xamOk').onclick = closeXam;
+$('#xamAgain').onclick = () => { closeXam(); setTimeout(drawXam, 450) };
+$('#xamModal').onclick = e => { if (e.target.id === 'xamModal') closeXam() };
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#xamModal').hidden) closeXam() });
+
 function act(name, obj){
   switch (name){
-    case 'incense': lightIncense(); break;
-    case 'candles': { const on = !candles.some(c => c.lit); candles.forEach(c => setCandle(c, on)); if (on) toast('Thắp đèn nến sáng tỏ 🕯️'); syncButtons(); break }
-    case 'candle': { const c = candles.find(c => c.g === obj); setCandle(c, !c.lit); syncButtons(); break }
+    case 'incense': startOffering(); break;
+    case 'xam': drawXam(); break;
+    case 'candle': { const c = candles.find(c => c.g === obj); setCandle(c, !c.lit); break }
     case 'bell': ringBell(); break;
     case 'mo': knockMo(); break;
-    default: if (offers[name]) toggleOffer(name);
   }
 }
 document.querySelectorAll('#bar button').forEach(b => b.onclick = () => act(b.dataset.act));
 
 /* ================= Click / hover trên cảnh 3D ================= */
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-const clickables = [bowlG, ...candles.map(c => c.g), bellG, moG];
-const labels = { incense: 'Bát hương — chạm để thắp hương', candle: 'Đèn nến — chạm để thắp / tắt', bell: 'Chuông gia trì — chạm để thỉnh chuông', mo: 'Mõ — chạm để gõ' };
+const clickables = [bowlG, ...candles.map(c => c.g), bellG, moG, xamG];
+const labels = { incense: 'Bát hương — chạm để thắp hương', xam: 'Ống xăm Quan Âm — chạm để xin xăm', candle: 'Đèn nến — chạm để thắp / tắt', bell: 'Chuông gia trì — chạm để thỉnh chuông', mo: 'Mõ — chạm để gõ' };
 function pick(e){
   const r = renderer.domElement.getBoundingClientRect();
   ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
@@ -546,17 +1064,29 @@ $('#wish').onsubmit = e => {
 };
 
 /* ================= Vào chánh điện ================= */
-$('#enter').onclick = () => {
-  if (!muted) bgm.play().catch(() => {});
+function enterHall(fromGate){
+  if (!muted) bgm.play().catch(() => {
+    // Trình duyệt chưa cho phát: phát ở lần chạm đầu tiên
+    addEventListener('pointerdown', () => { if (!muted) bgm.play().catch(() => {}) }, { once: true });
+  });
   audio(); bellSound(.22);
   $('#intro').classList.add('hide');
   const p0 = CAM_START.clone(), t0 = TGT_START.clone();
   tween(3.5, k => {
     const e = easeInOut(k);
     camera.position.lerpVectors(p0, CAM_END, e); controls.target.lerpVectors(t0, TGT_END, e);
-  }, () => { controls.enabled = true });
+  }, () => {
+    controls.enabled = true;
+    if (fromGate) toast('Chạm vào bát hương để dâng hương 🙏');
+  });
   setTimeout(() => $('#hint').classList.add('off'), 9000);
-};
+}
+$('#enter').onclick = () => enterHall(false);
+// Đi qua cổng chùa ở trang chủ thì vào thẳng chánh điện
+if (new URLSearchParams(location.search).has('vao')){
+  $('#intro').style.transition = 'none';
+  enterHall(true);
+}
 
 /* ================= Vòng lặp ================= */
 const clock = new THREE.Clock();
