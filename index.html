@@ -7,6 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="fonts/thu-phap.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8e1b1b">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script src="pwa.js" defer></script>
 <style>
   :root{
     --gold:#d4a73a; --gold-2:#f3d27a; --red:#8e1b1b; --red-2:#b3261e;
@@ -30,6 +35,8 @@
   .menu a{font-size:.95rem;opacity:.9;position:relative;padding:4px 0}
   .menu a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--gold);transition:.3s}
   .menu a:hover::after{width:100%}
+  .install-btn{border:1px solid var(--gold);color:var(--gold-2);padding:4px 14px!important;border-radius:20px;background:#0006}
+  .install-btn::after{display:none}
   .burger{display:none;background:none;border:0;color:var(--gold-2);font-size:1.8rem;cursor:pointer}
 
   /* ===== Cổng chùa ===== */
@@ -54,7 +61,7 @@
   .doorway::after{content:"";position:absolute;z-index:3;left:50%;top:6%;bottom:0;width:2px;margin-left:-1px;
     background:linear-gradient(transparent,#ffe2a0 25%,#ffb94a 85%,transparent);box-shadow:0 0 14px 4px #ffb94a88;animation:breathe 2.4s infinite;transition:opacity .4s}
   .gate.open .doorway::after{opacity:0;animation:none}
-  .inside{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#ffd27a99,transparent 60%),url(images/chinh-dien.webp) center 30%/cover;filter:brightness(.4);transition:filter 1.6s}
+  .inside{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#ffd27a99,transparent 60%),url(images/chinh-dien-5.webp) 56% 30%/cover;filter:brightness(.4);transition:filter 1.6s}
   .door{position:absolute;z-index:2;top:0;bottom:0;width:50%;transition:transform 1.8s cubic-bezier(.55,0,.25,1),filter .3s}
   .door svg{display:block;width:100%;height:100%}
   .door.l{left:0;transform-origin:left center}
@@ -163,6 +170,7 @@
       <li><a href="#cau-nguyen">Cầu nguyện</a></li>
       <li><a href="#dich-vu">Dâng lễ</a></li>
       <li><a href="#lien-he">Liên hệ</a></li>
+      <li><a href="#" class="install-btn" data-install>☸ Thỉnh chùa về</a></li>
     </ul>
   </div>
 </header>
@@ -387,7 +395,7 @@
   <div class="container">
     <div class="title reveal"><small>Phật sự</small><h2>Các Nghi Lễ</h2><div class="divider">❀</div></div>
     <div class="cards">
-      <div class="card reveal"><img src="images/chinh-dien.webp" alt="Chính điện"><div><h3>Lễ cầu an</h3><p>Tụng kinh cầu an đầu năm, ngày rằm, mùng một cho gia đình và người thân.</p></div></div>
+      <div class="card reveal"><img src="images/chinh-dien-5.webp" alt="Chính điện"><div><h3>Lễ cầu an</h3><p>Tụng kinh cầu an đầu năm, ngày rằm, mùng một cho gia đình và người thân.</p></div></div>
       <div class="card reveal"><img src="images/dien-phat.jpg" alt="Điện Phật"><div><h3>Lễ cầu siêu</h3><p>Hồi hướng công đức, cầu siêu cho hương linh ông bà, cha mẹ đã khuất.</p></div></div>
       <div class="card reveal"><img src="images/ban-tho.jpg" alt="Ban thờ"><div><h3>Thiết kế ban thờ</h3><p>Tư vấn bố trí ban thờ Phật, gia tiên đúng phong thủy và nghi lễ.</p></div></div>
     </div>
