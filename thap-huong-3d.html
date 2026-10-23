@@ -66,7 +66,9 @@
   @keyframes glow{to{filter:drop-shadow(0 0 18px #f3d27a)}}
   .intro h1{font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;color:var(--gold-2);font-size:clamp(2.2rem,6vw,3.6rem);margin:10px 0}
   .intro p{color:var(--muted);margin-bottom:28px}
-  .intro button{padding:15px 38px;border-radius:40px;border:0;font:600 1.05rem 'Be Vietnam Pro',sans-serif;cursor:pointer;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a1d05;box-shadow:0 8px 30px #d4a73a66}
+  .intro button{padding:15px 38px;border-radius:40px;border:0;font:600 1.05rem 'Be Vietnam Pro',sans-serif;cursor:pointer;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a1d05;box-shadow:0 8px 30px #d4a73a66;transition:opacity .4s}
+  /* nút mờ, không bấm được cho tới khi cảnh 3D dựng xong */
+  .intro button:disabled{opacity:.55;cursor:wait;box-shadow:none}
   .intro small{display:block;margin-top:14px;color:#8a7558}
   #err{position:fixed;inset:0;display:grid;place-items:center;background:var(--dark);z-index:20;padding:24px;text-align:center;color:var(--gold-2)}
   #err[hidden]{display:none}
@@ -194,7 +196,7 @@
     <div class="lotus">☸</div>
     <h1>Nam Mô A Di Đà Phật</h1>
     <p>Mời bạn bước vào chánh điện, dâng hương lễ Phật</p>
-    <button id="enter">Vào chánh điện</button>
+    <button id="enter" disabled>Đang thỉnh chư Phật ngự pháp giá…</button>
     <small>Nên bật âm thanh để nghe tiếng chuông</small>
   </div>
 </div>
@@ -1776,6 +1778,7 @@ function enterHall(fromGate){
   setTimeout(() => $('#hint').classList.add('off'), 9000);
 }
 $('#enter').onclick = () => enterHall(false);
+Object.assign($('#enter'), { disabled: false, textContent: 'Vào chánh điện' });   // cảnh đã dựng xong: cho bấm
 // Đi qua cổng chùa ở trang chủ thì vào thẳng chánh điện
 if (new URLSearchParams(location.search).has('vao')){
   $('#intro').style.transition = 'none';
