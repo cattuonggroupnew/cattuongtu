@@ -23,7 +23,11 @@
   .top{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;gap:10px;background:linear-gradient(#000a,transparent);pointer-events:none;z-index:5}
   .top > *{pointer-events:auto}
   .back{border:1px solid #d4a73a66;padding:7px 14px;border-radius:30px;font-size:.85rem;background:#0006}
-  .brand{font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;color:var(--gold-2);font-size:1.5rem;text-shadow:0 2px 10px #000}
+  .top{align-items:flex-start}
+  .left{display:flex;flex-direction:column;align-items:center;gap:10px}
+  /* tên chùa viết dọc kiểu câu đối, mỗi chữ một dòng, dưới nút về trang chủ */
+  .brand{display:flex;flex-direction:column;align-items:center;font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;color:var(--gold-2);font-size:1.5rem;line-height:1.15;text-shadow:0 2px 10px #000;pointer-events:none}
+  .brand i{font-style:normal;font-size:1.1rem;margin-bottom:4px}
   .right{display:flex;gap:8px;align-items:center}
   .chip{border:1px solid #d4a73a66;padding:7px 12px;border-radius:30px;font-size:.85rem;background:#0006;color:var(--text);cursor:pointer;font-family:inherit}
 
@@ -123,15 +127,17 @@
   .cd-qr.empty .cd-qr-empty{display:flex}
   .cd-fund{font-size:.85rem;color:#7a5a3a;margin-top:-4px}
   .cd-note{font-size:.85rem;color:#7a5a3a;margin-top:16px;line-height:1.6}
-  @media (max-width:600px){.brand{display:none}.hint{bottom:92px}}
+  @media (max-width:600px){.brand{font-size:1.2rem}.hint{bottom:92px}}
 </style>
 </head>
 <body>
 <div id="stage"></div>
 
 <div class="top">
-  <a href="index.html" class="back">← Trang chủ</a>
-  <div class="brand">☸ Cát Tường Tự</div>
+  <div class="left">
+    <a href="index.html" class="back">← Trang chủ</a>
+    <div class="brand" aria-label="Cát Tường Tự"><i>☸</i><span>Cát</span><span>Tường</span><span>Tự</span></div>
+  </div>
   <div class="right"><button class="chip" data-install title="Cài ứng dụng chùa về máy">☸ Thỉnh chùa về</button><span class="chip" id="count">🔥 0</span><button class="chip" id="mute" title="Âm thanh">🔊</button></div>
 </div>
 <div id="timer"></div>
@@ -209,6 +215,12 @@
 <script src="data/gia-nen-7.js"></script>
 <script src="data/den-long.js"></script>
 <script src="data/den-sen.js"></script>
+<script src="data/ban-tho.js"></script>
+<script src="data/ban-xam.js"></script>
+<script src="data/dai-sen.js"></script>
+<script src="data/binh-hoa.js"></script>
+<script src="data/binh-lon.js"></script>
+<script src="data/de-su-tu.js"></script>
 <script src="data/hoa-sen.js"></script><script>
 (function(){
 const { OrbitControls, RoomEnvironment } = THREE;
@@ -225,7 +237,7 @@ function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add
 
 /* ================= Renderer / Scene ================= */
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // màn hình mật độ cao: vẽ tối đa 1.5× cho nhẹ máy
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.physicallyCorrectLights = true;
@@ -237,16 +249,16 @@ $('#stage').appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x120804);
-scene.fog = new THREE.Fog(0x120804, 13, 26);
+scene.fog = new THREE.Fog(0x120804, 25, 52);
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
-const camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 60);
-const CAM_START = new THREE.Vector3(0, 3.4, 11), CAM_END = new THREE.Vector3(0, 2.6, 7);
-const TGT_START = new THREE.Vector3(0, 3, -3), TGT_END = new THREE.Vector3(0, 2.7, -1.5);
+const camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 80);
+const CAM_START = new THREE.Vector3(0, 4.4, 22.5), CAM_END = new THREE.Vector3(0, 4.1, 15.5);
+const TGT_START = new THREE.Vector3(0, 4.8, -3), TGT_END = new THREE.Vector3(0, 4, -1.5);
 camera.position.copy(CAM_START);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.copy(TGT_START);
-Object.assign(controls, { enableDamping: true, enablePan: false, minDistance: 1.4, maxDistance: 9,
+Object.assign(controls, { enableDamping: true, enablePan: false, minDistance: 1.4, maxDistance: 20,
   minPolarAngle: 0.6, maxPolarAngle: 1.85, minAzimuthAngle: -1.05, maxAzimuthAngle: 1.05, enabled: false });
 function fitFov(){ camera.fov = camera.aspect < 0.8 ? 74 : 52; camera.updateProjectionMatrix() }
 fitFov();
@@ -301,40 +313,88 @@ const floorTex = canvasTex(512, 512, g => {
   }
 });
 floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping; floorTex.repeat.set(5, 5);
-mesh(new THREE.PlaneGeometry(30, 30), std(0xffffff, { map: floorTex, roughness: .25, envMapIntensity: .3 })).rotation.x = -Math.PI / 2;
-mesh(new THREE.PlaneGeometry(2.4, 8), std(0x8e1b1b, { roughness: .9 }), 0, .006, 2).rotation.x = -Math.PI / 2;
-// gian điện: rộng ±HALL_X, trần cao CEIL, tường sau z = -6.1 kéo ra tới mép sàn z = 15
-const HALL_X = 11, CEIL = 10, HALL_Z0 = -6.1, HALL_Z1 = 15, HALL_ZC = (HALL_Z0 + HALL_Z1) / 2, HALL_D = HALL_Z1 - HALL_Z0;
-mesh(new THREE.PlaneGeometry(30, 12), std(0x3a0d08, { roughness: .8 }), 0, 6, HALL_Z0);
-mesh(new THREE.PlaneGeometry(HALL_D, 12), std(0x2e0b06, { roughness: .8 }), -HALL_X, 6, HALL_ZC).rotation.y = Math.PI / 2;
-mesh(new THREE.PlaneGeometry(HALL_D, 12), std(0x2e0b06, { roughness: .8 }), HALL_X, 6, HALL_ZC).rotation.y = -Math.PI / 2;
+floorTex.repeat.set(8, 9);
+mesh(new THREE.PlaneGeometry(48, 54), std(0xffffff, { map: floorTex, roughness: .25, envMapIntensity: .3 })).rotation.x = -Math.PI / 2;
+// gian điện: rộng ±HALL_X, trần cao CEIL, tường sau z = HALL_Z0 kéo ra tới mép sàn z = HALL_Z1
+const HALL_X = 17, CEIL = 16, HALL_Z0 = -9, HALL_Z1 = 27, HALL_ZC = (HALL_Z0 + HALL_Z1) / 2, HALL_D = HALL_Z1 - HALL_Z0;
+// cả ba tượng (kèm đài sen, bệ) phóng to theo STATUE_S quanh mặt bệ cao 2.2
+const STATUE_S = 1.6, PEDESTAL_TOP = 2.2;
+// bệ tượng: Phật giữa (tâm tượng z = PHAT_Z, bệ lệch ra trước PHAT_DE_Z), hai Bồ Tát ở ±SIDE_X; bệ đều cao 2.2
+// bệ Phật đủ sâu để mặt trên (≈95% bề sâu mẫu) đỡ trọn đài sen đã phóng to (bán kính đáy ≈ 2 · STATUE_S)
+const PHAT_Z = -5.3, PHAT_DE_W = 4.9 * STATUE_S, PHAT_DE_D = 4.2 * STATUE_S, PHAT_DE_Z = .3;
+const SIDE_X = 6.6, SIDE_Z = -5.5, SIDE_DE_W = 3.2 * STATUE_S;
+// mỗi tượng một bàn thờ dài bằng bệ, đặt sát mép trước bệ (bàn sâu 1.62 + bệ đèn phía sau: lưng bàn cách tâm ALTAR_BACK)
+const ALTAR_BACK = .82, ALTAR_GAP = .08;
+const FRONT_Z = PHAT_Z + PHAT_DE_Z + PHAT_DE_D / 2 + ALTAR_GAP + ALTAR_BACK;   // bàn thờ chính (Phật), chuông mõ, ống xăm, thảm
+const SIDE_ALTAR_Z = SIDE_Z + SIDE_DE_W / 2 + ALTAR_GAP + ALTAR_BACK;           // bàn thờ hai Bồ Tát
+// thảm đỏ: từ dưới bàn thờ chính chạy dài ra gần cửa gian điện
+const CARPET_Z0 = FRONT_Z - 2, CARPET_Z1 = HALL_Z1 - 2;
+mesh(new THREE.PlaneGeometry(2.4, CARPET_Z1 - CARPET_Z0), std(0x8e1b1b, { roughness: .9 }), 0, .006, (CARPET_Z0 + CARPET_Z1) / 2).rotation.x = -Math.PI / 2;
+mesh(new THREE.PlaneGeometry(HALL_X * 2 + 2, CEIL + 2), std(0x3a0d08, { roughness: .8 }), 0, CEIL / 2 + 1, HALL_Z0);
+mesh(new THREE.PlaneGeometry(HALL_D, CEIL + 2), std(0x2e0b06, { roughness: .8 }), -HALL_X, CEIL / 2 + 1, HALL_ZC).rotation.y = Math.PI / 2;
+mesh(new THREE.PlaneGeometry(HALL_D, CEIL + 2), std(0x2e0b06, { roughness: .8 }), HALL_X, CEIL / 2 + 1, HALL_ZC).rotation.y = -Math.PI / 2;
 // trần gỗ son: tự sáng nhẹ vì đèn ít chiếu tới
 mesh(new THREE.PlaneGeometry(HALL_X * 2, HALL_D), std(0x5a1a0e, { roughness: .7, emissive: 0x2a0a04 }), 0, CEIL, HALL_ZC).rotation.x = Math.PI / 2;
-// tranh trần: nghìn Phật nền xanh (ảnh dọc 800×1321) phủ kín trần; vừa khít bề ngang, cắt bớt hai đầu,
-// tâm vòng tròn giữa tranh nằm giữa trần, đầu tranh hướng về tượng
-const ceilTex = new THREE.TextureLoader().load(src('trannha', 'images/tran-nha.jpg'));
+// tranh trần: vạn Phật nền đen (ảnh ngang 1234×790, bỏ viền đen: vùng tranh x 28..1206, y 38..758) phủ kín trần;
+// phóng vừa đủ che kín cả trần (thừa thì cắt hai bên), tượng Phật lớn giữa tranh nằm giữa trần, đầu tranh hướng về tượng
+const ceilTex = new THREE.TextureLoader().load(src('vanphat', 'images/chinh-dien-thien-phat.webp'));
 ceilTex.encoding = THREE.sRGBEncoding; ceilTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-const CEIL_IMG_L = HALL_X * 2 * 1321 / 800;             // chiều dài ảnh khi rộng bằng trần
-ceilTex.repeat.set(1, HALL_D / CEIL_IMG_L); ceilTex.offset.set(0, (1 - HALL_D / CEIL_IMG_L) / 2);
+const CEIL_IMG = { w: 1234, h: 790, x0: 28, x1: 1206, y0: 38, y1: 758 };
+const CEIL_PX = Math.max(HALL_X * 2 / (CEIL_IMG.x1 - CEIL_IMG.x0), HALL_D / (CEIL_IMG.y1 - CEIL_IMG.y0));   // đơn vị cảnh / pixel
+const CEIL_RU = HALL_X * 2 / CEIL_PX / CEIL_IMG.w, CEIL_RV = HALL_D / CEIL_PX / CEIL_IMG.h;
+ceilTex.repeat.set(CEIL_RU, CEIL_RV);
+ceilTex.offset.set((CEIL_IMG.x0 + CEIL_IMG.x1) / 2 / CEIL_IMG.w - CEIL_RU / 2, 1 - (CEIL_IMG.y0 + CEIL_IMG.y1) / 2 / CEIL_IMG.h - CEIL_RV / 2);
 const ceilPanel = mesh(new THREE.PlaneGeometry(HALL_X * 2, HALL_D), new THREE.MeshBasicMaterial({ map: ceilTex, color: 0xb8aea4, toneMapped: false }), 0, CEIL - .02, HALL_ZC);
 ceilPanel.rotation.x = Math.PI / 2; ceilPanel.rotation.z = Math.PI;
 
 // Tranh chính điện (ảnh của bạn) làm phông nền
 const loader = new THREE.TextureLoader();
-const muralTex = loader.load(src('chinhdien', 'images/chinh-dien-thien-phat.webp'));
+// Tranh hai Bồ Tát trên hai tường bên (ảnh dọc 736×1308), quay mặt về phía bàn thờ:
+// Văn Thù cưỡi sư tử tường trái, Phổ Hiền cưỡi voi tường phải; khung vàng, đặt giữa hai cột thứ 2 và 3
+// mỗi bên một hàng cột cách đều từ sát tường sau tới PILLAR_Z1 (dựng ở phần Cột bên dưới)
+const PILLAR_Z0 = HALL_Z0 + .55, PILLAR_Z1 = 12, PILLAR_ZS = [0, 1, 2, 3].map(i => PILLAR_Z0 + (PILLAR_Z1 - PILLAR_Z0) * i / 3);
+// tranh nằm giữa hai cột PILLAR_ZS[1], PILLAR_ZS[2]; đáy tranh cao hơn bàn thờ trước tranh
+const SIDE_ART_H = 8, SIDE_ART_W = SIDE_ART_H * 736 / 1308, SIDE_ART_Y = 2 + SIDE_ART_H / 2;
+const SIDE_ART_Z = (PILLAR_ZS[1] + PILLAR_ZS[2]) / 2;
+[[-1, 'vanthu', 'images/van-thu.jpg'], [1, 'phohien', 'images/pho-hien.jpg']].forEach(([sx, key, path]) => {
+  const tex = loader.load(src(key, path)); tex.encoding = THREE.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const g = group(sx * (HALL_X - .02), SIDE_ART_Y, SIDE_ART_Z); g.rotation.y = -sx * Math.PI / 2;
+  mesh(new THREE.PlaneGeometry(SIDE_ART_W, SIDE_ART_H), new THREE.MeshBasicMaterial({ map: tex, color: 0xd8d0c4, toneMapped: false }), 0, 0, .03, g);
+  for (const s of [-1, 1]){
+    mesh(new THREE.BoxGeometry(SIDE_ART_W + .4, .2, .12), M.gold, 0, s * (SIDE_ART_H / 2 + .1), .02, g);
+    mesh(new THREE.BoxGeometry(.2, SIDE_ART_H + .4, .12), M.gold, s * (SIDE_ART_W / 2 + .1), 0, .02, g);
+  }
+});
+const muralTex = loader.load(src('chinhdien', 'images/cuc-lac.jpg'));
 muralTex.encoding = THREE.sRGBEncoding; muralTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-// tranh nghìn Phật 1234×790 phủ kín tường sau (rộng 2·HALL_X, cao từ sàn tới trần); ảnh vừa khít bề ngang,
-// phần thừa trên/dưới bị cắt. Tâm vòng hào quang (cách mép trên 47% ảnh) giữ ở HALO_Y, chính giữa x = 0,
-// để ôm sau đầu tượng Phật khi nhìn từ CAM_END
-const MURAL_W = HALL_X * 2, MURAL_IMG_H = MURAL_W * 790 / 1234, HALO_Y = 5.9;
-const MURAL_IMG_BOTTOM = HALO_Y - (1 - .47) * MURAL_IMG_H;  // mép dưới ảnh (có thể dưới sàn)
-muralTex.repeat.set(1, CEIL / MURAL_IMG_H); muralTex.offset.set(0, -MURAL_IMG_BOTTOM / MURAL_IMG_H);
-mesh(new THREE.PlaneGeometry(MURAL_W, CEIL), new THREE.MeshBasicMaterial({ map: muralTex, color: 0xd0c8c0, toneMapped: false }), 0, CEIL / 2, -6);
+// tranh Tây Phương Cực Lạc (1599×890): khung giữa (giữa hai đường kẻ dọc ngoài cùng, pixel MURAL_U0..MURAL_U1)
+// phủ kín bề ngang tường sau; hai dải tranh thừa hai bên chạy tiếp sang tường bên, bắt đầu từ góc phòng.
+// Cao từ sàn tới trần, phần thừa trên/dưới bị cắt. Hào quang Phật trong tranh (cách mép trên MURAL_HALO ảnh)
+// giữ ở HALO_Y, chính giữa x = 0, để ôm sau đầu tượng Phật khi nhìn từ CAM_END
+const MURAL_U0 = 241 / 1599, MURAL_U1 = 1352 / 1599;
+const MURAL_W = HALL_X * 2, MURAL_UNIT = MURAL_W / (MURAL_U1 - MURAL_U0);  // bề ngang cả ảnh theo đơn vị cảnh
+// MURAL_LIFT: nâng cả tranh lên cao hơn
+const MURAL_LIFT = 1.0;
+const MURAL_IMG_H = MURAL_UNIT * 890 / 1599, MURAL_HALO = .34, HALO_Y = PEDESTAL_TOP + (5.9 - PEDESTAL_TOP) * STATUE_S + MURAL_LIFT;
+const MURAL_IMG_BOTTOM = HALO_Y - (1 - MURAL_HALO) * MURAL_IMG_H;  // mép dưới ảnh (có thể dưới sàn)
+const muralM = new THREE.MeshBasicMaterial({ map: muralTex, color: 0xd0c8c0, toneMapped: false });
+// mặt phẳng cao bằng trần, mang đoạn ảnh u0..u1 (cắt theo chiều dọc như trên)
+function muralPlane(u0, u1){
+  const geo = new THREE.PlaneGeometry((u1 - u0) * MURAL_UNIT, CEIL), uv = geo.attributes.uv;
+  const v0 = -MURAL_IMG_BOTTOM / MURAL_IMG_H, v1 = (CEIL - MURAL_IMG_BOTTOM) / MURAL_IMG_H;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, u0 + (u1 - u0) * uv.getX(i), v0 + (v1 - v0) * uv.getY(i));
+  return geo;
+}
+mesh(muralPlane(MURAL_U0, MURAL_U1), muralM, 0, CEIL / 2, HALL_Z0 + .1);
+// dải trái: mép trái ảnh ở phía trước, nối vào tường sau ở góc; dải phải đối xứng
+const muralL = MURAL_U0 * MURAL_UNIT, muralR = (1 - MURAL_U1) * MURAL_UNIT;
+mesh(muralPlane(0, MURAL_U0), muralM, -HALL_X + .02, CEIL / 2, HALL_Z0 + muralL / 2).rotation.y = Math.PI / 2;
+mesh(muralPlane(MURAL_U1, 1), muralM, HALL_X - .02, CEIL / 2, HALL_Z0 + muralR / 2).rotation.y = -Math.PI / 2;
 
 // Cột (cao tới trần); chân cột = đế hoa sen chép từ tượng Quan Âm (lát y LOTUS_Y0..LOTUS_Y1 của mẫu):
 // tầng cánh sen úp (y < LOTUS_MID) giữ nguyên; tầng cánh sen ngửa bị vạt áo tượng phủ ở hai bên nên lấy
 // múi 45° phía sau tượng (không có áo) rồi lật/xoay ghép đủ 8 múi quanh vòng
-const PILLAR_X = 7.2, LOTUS_Y0 = .088, LOTUS_MID = .19, LOTUS_Y1 = .335, LOTUS_S = 1.75, LOTUS_WEDGE = Math.PI / 4;
+const PILLAR_X = 12, LOTUS_Y0 = .088, LOTUS_MID = .19, LOTUS_Y1 = .335, LOTUS_S = 1.75, LOTUS_WEDGE = Math.PI / 4, LOTUS_SEAM = .07;
 const lotusBaseGeo = window.QUAN_AM && (() => {
   const src = modelGeo(QUAN_AM), p = src.attributes.position, nrm = src.attributes.normal, idx = src.index.array;
   // tâm vòng đế đo theo tầng dưới
@@ -349,7 +409,8 @@ const lotusBaseGeo = window.QUAN_AM && (() => {
     if (my < LOTUS_MID){ low.push(v); continue }
     const mx = v.reduce((s, k) => s + p.getX(k), 0) / 3 - cx, mz = v.reduce((s, k) => s + p.getZ(k), 0) / 3 - cz;
     const a = Math.atan2(mx, mz);                       // 0 = phía sau tượng (+z của mẫu)
-    if (a >= 0 && a < LOTUS_WEDGE) wedge.push(v);
+    // lấy dư mỗi bên một chút để các múi ghép chồng mép lên nhau, không hở đường nối
+    if (a >= -LOTUS_SEAM && a < LOTUS_WEDGE + LOTUS_SEAM) wedge.push(v);
   }
   const put = (v, ang, mirror) => {
     const c = Math.cos(ang), s = Math.sin(ang);
@@ -371,21 +432,36 @@ const lotusBaseGeo = window.QUAN_AM && (() => {
   return geo;
 })();
 const LOTUS_BASE_H = (LOTUS_Y1 - LOTUS_Y0) * LOTUS_S;
+// thân cột bán kính PILLAR_R; đài sen chân cột (và đài sen úp ngược ở đầu cột sát trần) phóng theo cùng tỉ lệ
+const PILLAR_R = .45, PILLAR_LS = LOTUS_S * PILLAR_R / .32, PILLAR_LH = (LOTUS_Y1 - LOTUS_Y0) * PILLAR_LS;
+function lotusCap(g, y, flip){
+  const s = group(0, y, 0, g); if (flip) s.rotation.x = Math.PI;
+  mesh(lotusBaseGeo, M.gold, 0, 0, 0, s).scale.setScalar(PILLAR_LS);
+  // đế mẫu rỗng ở trên: đậy nắp vàng kín miệng vành và lòng sen
+  mesh(new THREE.CylinderGeometry(.243 * PILLAR_LS, .243 * PILLAR_LS, .05, 48), M.gold, 0, (LOTUS_MID - LOTUS_Y0) * PILLAR_LS + .03, 0, s);
+  mesh(new THREE.CylinderGeometry(.26 * PILLAR_LS, .26 * PILLAR_LS, .04, 48), M.gold, 0, (.29 - LOTUS_Y0) * PILLAR_LS, 0, s);
+}
+// thân cột bọc vải rồng vàng nền đỏ (images/cot-rong.jpg: dải 420×356px của tấm vải, tỉ lệ 1024×868).
+// Quanh chu vi: đúng 1 vòng ảnh, không lặp rồng; đường nối dọc duy nhất quay ra phía tường (khuất).
+// Theo chiều cao: mép trên/dưới của dải được chọn chạy qua hoa lá (ít rồng nhất) rồi lặp soi gương
+const pillarTex = new THREE.TextureLoader().load(src('cotrong', 'images/cot-rong.jpg'));
+pillarTex.encoding = THREE.sRGBEncoding; pillarTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+pillarTex.wrapS = THREE.RepeatWrapping; pillarTex.wrapT = THREE.MirroredRepeatWrapping;
+pillarTex.repeat.set(1, CEIL / (2 * Math.PI * PILLAR_R * 868 / 1024));
+const pillarM = std(0xffffff, { map: pillarTex, roughness: .45, envMapIntensity: .5 });
 function pillar(x, z){
   const g = group(x, 0, z);
-  mesh(new THREE.CylinderGeometry(.32, .32, CEIL, 32), std(0x7a1410, { roughness: .35 }), 0, CEIL / 2, 0, g);
+  // xoay để đường nối dọc của vải (u = 0, mặc định quay +z) quay ra phía tường bên
+  mesh(new THREE.CylinderGeometry(PILLAR_R, PILLAR_R, CEIL, 64), pillarM, 0, CEIL / 2, 0, g).rotation.y = Math.sign(x) * Math.PI / 2;
   if (lotusBaseGeo){
-    mesh(lotusBaseGeo, M.gold, 0, 0, 0, g).scale.setScalar(LOTUS_S);
-    // đế mẫu rỗng ở trên: đậy nắp vàng kín miệng vành, ôm chân cột
-    mesh(new THREE.CylinderGeometry(.243 * LOTUS_S, .243 * LOTUS_S, .05, 48), M.gold, 0, (LOTUS_MID - LOTUS_Y0) * LOTUS_S + .03, 0, g);
-    // mặt lòng sen: che chỗ mặt ngồi của tượng bị cắt
-    mesh(new THREE.CylinderGeometry(.26 * LOTUS_S, .26 * LOTUS_S, .04, 48), M.gold, 0, (.29 - LOTUS_Y0) * LOTUS_S, 0, g);
+    lotusCap(g, 0, false);
+    lotusCap(g, CEIL, true);   // đài sen úp ngược ở đầu cột, sát trần
   } else mesh(new THREE.CylinderGeometry(.46, .5, .35, 32), M.gold, 0, .175, 0, g);
-  [lotusBaseGeo ? LOTUS_BASE_H + .04 : .6, CEIL - .7].forEach(y => { mesh(new THREE.TorusGeometry(.33, .035, 12, 48), M.gold, 0, y, 0, g).rotation.x = Math.PI / 2 });
+  [lotusBaseGeo ? PILLAR_LH + .05 : .6, CEIL - (lotusBaseGeo ? PILLAR_LH + .05 : .7)].forEach(y => { mesh(new THREE.TorusGeometry(PILLAR_R + .01, .04, 12, 48), M.gold, 0, y, 0, g).rotation.x = Math.PI / 2 });
 }
-// mỗi bên một hàng cột, cách đều 5.4 từ sau tượng tới cuối gian (2 cột đầu mang câu đối)
-const PILLAR_ZS = [-4.2, 1.2, 6.6, 12];
-for (const z of PILLAR_ZS) for (const x of [-PILLAR_X, PILLAR_X]) pillar(x, z);
+// mỗi bên một hàng cột: cột trong cùng sát tranh tường sau, các cột còn lại cách đều tới cuối gian (2 cột đầu mang câu đối)
+// bỏ cặp cột sát tường (PILLAR_ZS[0]), chỗ đó đặt bình sứ lớn
+for (const z of PILLAR_ZS.slice(1)) for (const x of [-PILLAR_X, PILLAR_X]) pillar(x, z);
 
 // Câu đối
 // bảng dài theo số chữ: 4 chữ cao 3.5, 7 chữ cao 5.4
@@ -407,13 +483,13 @@ function couplet(words, x, z = 1.2){
     t.needsUpdate = true;
   };
   draw(); if (document.fonts) document.fonts.load('bold 44px "Thu Phap Cat Tuong"').then(draw, () => {});
-  mesh(new THREE.PlaneGeometry(.5, H), std(0xffffff, { map: t, roughness: .4 }), x, 4.4 + (H - 3.5) / 2, z + .34);
+  mesh(new THREE.PlaneGeometry(.6, H), std(0xffffff, { map: t, roughness: .4 }), x, 4.4 + (H - 3.5) / 2, z + PILLAR_R + .02);
 }
-couplet(['Từ', 'Bi', 'Hỷ', 'Xả'], -PILLAR_X);
-couplet(['Phật', 'Pháp', 'Nhiệm', 'Mầu'], PILLAR_X);
-// cặp cột phía trong (sát tượng)
-couplet(['Phật', 'quốc', 'trang', 'nghiêm', 'tam', 'hữu', 'lộ'], -PILLAR_X, -4.2);
-couplet(['Pháp', 'vân', 'phổ', 'nhuận', 'tứ', 'sinh', 'thiên'], PILLAR_X, -4.2);
+// cặp cột đầu (gần tượng): câu đối 7 chữ; cặp cột kế tiếp: câu đối 4 chữ
+couplet(['Phật', 'quốc', 'trang', 'nghiêm', 'tam', 'hữu', 'lộ'], -PILLAR_X, PILLAR_ZS[1]);
+couplet(['Pháp', 'vân', 'phổ', 'nhuận', 'tứ', 'sinh', 'thiên'], PILLAR_X, PILLAR_ZS[1]);
+couplet(['Từ', 'Bi', 'Hỷ', 'Xả'], -PILLAR_X, PILLAR_ZS[2]);
+couplet(['Phật', 'Pháp', 'Nhiệm', 'Mầu'], PILLAR_X, PILLAR_ZS[2]);
 
 /* ================= Bàn thờ: án gian gỗ chạm (theo mẫu) ================= */
 // ---- vẽ vân gỗ và chạm khắc lên canvas ----
@@ -535,7 +611,6 @@ const carvedM = (tex, pierced) => {
     alphaTest: pierced ? .5 : 0, side: pierced ? THREE.DoubleSide : THREE.FrontSide });
 };
 const frontOnly = m => [woodM, woodM, woodM, woodM, m, woodM];
-const friezeM = carvedM(friezeTexture(2048, 100, 3)), drawerM = carvedM(drawerTexture(2048, 116));
 const apronTex = apronTexture(2048, 250), apronM = carvedM(apronTex, true);
 const cornerTex = cornerTexture(), cornerM = carvedM(cornerTex, true);
 // mặt bằng chạm thủng đổ bóng đúng hình hoa văn
@@ -545,41 +620,93 @@ function pierced(geo, mat, tex, x, y, z, parent){
   return m;
 }
 
-const altar = group(0, 0, 0);
-// mặt án, gờ chỉ, hai đầu cuốn
-mesh(new THREE.BoxGeometry(4.6, .08, 1.62), woodM, 0, 1.16, 0, altar);
-mesh(new THREE.BoxGeometry(4.46, .045, 1.54), woodM, 0, 1.0975, 0, altar);
-for (const sx of [-1, 1]) mesh(new THREE.BoxGeometry(.1, .07, 1.62), woodM, sx * 2.27, 1.225, 0, altar);
-mesh(new THREE.BoxGeometry(4.62, .015, 1.64), M.gold, 0, 1.125, 0, altar);
-mesh(new THREE.BoxGeometry(4.24, .015, 1.46), M.gold, 0, .87, 0, altar);
-// diềm chạm dưới mặt án
-mesh(new THREE.BoxGeometry(4.2, .2, 1.42), frontOnly(friezeM), 0, .975, 0, altar);
-// chân vuông có gót
-for (const sx of [-1, 1]) for (const sz of [-1, 1]){
-  mesh(new THREE.BoxGeometry(.15, .875, .15), woodM, sx * 2.03, .4375, sz * .62, altar);
-  mesh(new THREE.BoxGeometry(.19, .06, .19), woodM, sx * 2.03, .03, sz * .62, altar);
+const altar = group(0, 0, FRONT_Z);
+// bàn thờ lớn và bàn nhỏ dựng từ mẫu table02 (vân gỗ mw134); mẫu chuẩn hoá 1×1×1, kéo giãn theo cỡ bàn
+const banGeo = window.BAN_THO && (() => {
+  const geo = modelGeo(BAN_THO), p = geo.attributes.position, uv = [];
+  // mẫu không có UV: chiếu vân gỗ theo mặt phẳng ngang/dọc
+  for (let i = 0; i < p.count; i++) uv.push(p.getX(i) * 3 + p.getZ(i), p.getY(i) + p.getZ(i) * .5);
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  return geo;
+})();
+const banM = banGeo && (() => {
+  const t = loader.load(BAN_THO.tex); t.encoding = THREE.sRGBEncoding; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return std(0xffffff, { map: t, roughness: .35, envMapIntensity: .55, side: THREE.DoubleSide });
+})();
+// mặt phẳng bàn của mẫu ở y = BAN_TOP (phần cao hơn là hai đầu cong vểnh); h = độ cao mặt phẳng bàn
+const BAN_TOP = .94;
+// tay nắm vàng cho cả 3 ngăn kéo (mẫu chỉ có ở ngăn thứ 3): chép tay nắm gốc sang tâm 2 ngăn còn lại
+const khoaGeo = banGeo && BAN_THO.khoa && modelGeo(BAN_THO.khoa);
+function addKhoa(m){
+  if (!khoaGeo) return;
+  for (const x of BAN_THO.ngan) mesh(khoaGeo, M.gold, x - BAN_THO.ngan[2], 0, 0, m);
 }
-// ô hộc chạm hoa (yếm chạm thủng và đầu cuốn mây ở góc đã bỏ cho gọn mắt)
-mesh(new THREE.BoxGeometry(3.95, .24, .04), frontOnly(drawerM), 0, .75, .645, altar);
-mesh(new THREE.BoxGeometry(3.95, .24, .04), woodM, 0, .75, -.645, altar);
-for (const sx of [-1, 1]) mesh(new THREE.BoxGeometry(.04, .24, 1.09), woodM, sx * 2.0, .75, 0, altar);
-// bệ cao phía sau (đặt bình hoa, đèn nến)
-mesh(new THREE.BoxGeometry(3.6, .33, .45), frontOnly(carvedM(friezeTexture(1600, 140, 4))), 0, 1.38, -.48, altar);
-mesh(new THREE.BoxGeometry(3.72, .04, .52), woodM, 0, 1.55, -.48, altar);
-mesh(new THREE.BoxGeometry(3.66, .03, .5), woodM, 0, 1.215, -.48, altar);
-// bàn thờ thấp phía trước (đặt ống xăm)
-const lowTable = group(0, 0, 1.15, altar);
-mesh(new THREE.BoxGeometry(2.1, .06, .7), woodM, 0, .57, 0, lowTable);
-mesh(new THREE.BoxGeometry(2.02, .04, .64), woodM, 0, .525, 0, lowTable);
-mesh(new THREE.BoxGeometry(1.94, .1, .58), frontOnly(carvedM(friezeTexture(1400, 72, 2))), 0, .455, 0, lowTable);
-for (const sx of [-1, 1]) for (const sz of [-1, 1]){
-  mesh(new THREE.BoxGeometry(.09, .41, .09), woodM, sx * .92, .205, sz * .25, lowTable);
-  mesh(new THREE.BoxGeometry(.12, .05, .12), woodM, sx * .92, .025, sz * .25, lowTable);
+function banTho(w, d, h, parent, z = 0){
+  if (!banGeo) return null;
+  const m = mesh(banGeo, banM, 0, 0, z, parent); m.scale.set(w, h / BAN_TOP, d);
+  addKhoa(m);
+  return m;
+}
+// bệ cao phía sau (đặt bình hoa, đèn nến): cùng mẫu bàn, bỏ chân, chỉ giữ mặt bàn + hộc tủ (y ≥ BENCH_CUT của mẫu),
+// kéo dài gần hết bàn lớn; đo đúng đáy/đỉnh phần giữ lại để đáy chạm mặt bàn (1.2), mặt bệ chạm đáy nến/bình (1.57)
+// bỏ luôn hai đầu cong vểnh (|x| > BENCH_END của mẫu), kéo dài gần bằng bàn (hụt BENCH_INSET mỗi đầu cong)
+const BENCH_CUT = .70, BENCH_Y0 = 1.2, BENCH_Y1 = 1.57, BENCH_END = .33, BENCH_INSET = .8;   // .33: vừa hết hộc tủ, bỏ cả tai đỡ dưới đầu cong
+const benchGeo = banGeo && (() => {
+  const g = banGeo.clone(), p = g.attributes.position, idx = banGeo.index.array, keep = [];
+  let lo = 1e9;
+  for (let i = 0; i < idx.length; i += 3){
+    const ys = [p.getY(idx[i]), p.getY(idx[i + 1]), p.getY(idx[i + 2])];
+    if (Math.min(...ys) < BENCH_CUT) continue;
+    if (Math.max(Math.abs(p.getX(idx[i])), Math.abs(p.getX(idx[i + 1])), Math.abs(p.getX(idx[i + 2]))) > BENCH_END) continue;
+    keep.push(idx[i], idx[i + 1], idx[i + 2]); lo = Math.min(lo, ...ys);
+  }
+  g.setIndex(keep); g.userData.lo = lo;
+  return g;
+})();
+// bàn thờ dài w: bàn lớn mặt cao 1.2 (đồ lễ đặt ở y = 1.2) + bệ cao phía sau
+function altarTable(w, parent){
+  if (!banTho(w, 1.62, 1.2, parent)){
+    mesh(new THREE.BoxGeometry(w, .08, 1.62), woodM, 0, 1.16, 0, parent);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) mesh(new THREE.BoxGeometry(.15, 1.12, .15), woodM, sx * (w / 2 - .27), .56, sz * .62, parent);
+  }
+  const bw = w - 2 * BENCH_INSET;
+  if (benchGeo){
+    const lo = benchGeo.userData.lo, h = (BENCH_Y1 - BENCH_Y0) / (BAN_TOP - lo);   // đáy hộc chạm bàn, mặt phẳng bệ chạm đáy nến/bình
+    const bench = mesh(benchGeo, banM, 0, BENCH_Y0 - lo * h, -.48, parent); bench.scale.set(bw / (2 * BENCH_END), h, .52);
+    addKhoa(bench);
+  } else {
+    mesh(new THREE.BoxGeometry(bw - .2, .33, .45), frontOnly(carvedM(friezeTexture(1600, 140, 4))), 0, 1.38, -.48, parent);
+    mesh(new THREE.BoxGeometry(bw - .08, .04, .52), woodM, 0, 1.55, -.48, parent);
+  }
+}
+altarTable(PHAT_DE_W, altar);
+// bàn thờ riêng trước mỗi Bồ Tát, dài bằng bệ
+const sideAltars = [-1, 1].map(sx => { const g = group(sx * SIDE_X, 0, SIDE_ALTAR_Z); altarTable(SIDE_DE_W, g); return g });
+// bàn thờ sát tường trước hai tranh Văn Thù, Phổ Hiền, dài bằng khung tranh, quay vào giữa gian
+const artAltars = [-1, 1].map(sx => {
+  const g = group(sx * (HALL_X - ALTAR_BACK - .15), 0, SIDE_ART_Z); g.rotation.y = -sx * Math.PI / 2;
+  altarTable(SIDE_ART_W + .4, g);
+  return g;
+});
+// bàn thờ thấp phía trước (đặt ống xăm), cách bàn thờ chính XAM_DZ; chuông mõ hai bên, đệm lạy phía trước
+// đặt gần người xem nhưng vẫn lọt khung hình từ CAM_END (xa hơn nữa thì đệm lạy rơi xuống dưới mép màn hình)
+const XAM_DZ = 7, XAM_Z = FRONT_Z + XAM_DZ;
+const lowTable = group(0, 0, XAM_DZ, altar);
+// mẫu bàn xăm riêng (data/ban-xam.js, table16): mặt bàn cao .6 (ống xăm đặt ở y = .6), rộng/sâu giữ đúng tỉ lệ mẫu
+const XAM_W = window.BAN_XAM ? .6 * BAN_XAM.size[0] / BAN_XAM.size[2] : 2.1;
+const banXam = window.BAN_XAM && (() => {
+  const t = loader.load(BAN_XAM.tex); t.encoding = THREE.sRGBEncoding; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const m = mesh(modelGeo(BAN_XAM), std(0xffffff, { map: t, roughness: .35, envMapIntensity: .55, side: THREE.DoubleSide }), 0, 0, 0, lowTable);
+  m.scale.set(XAM_W, .6, XAM_W * BAN_XAM.size[1] / BAN_XAM.size[0]);
+  return m;
+})();
+if (!banXam && !banTho(2.1, .7, .6, lowTable)){
+  mesh(new THREE.BoxGeometry(2.1, .06, .7), woodM, 0, .57, 0, lowTable);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) mesh(new THREE.BoxGeometry(.09, .54, .09), woodM, sx * .92, .27, sz * .25, lowTable);
 }
 
 // Lư hương: đỉnh ba chân quỳ mặt lân, thân bầu chạm mây, hai tai mây cuốn (theo mẫu)
-const bowlG = group(0, 1.2, .1, altar);
-bowlG.userData.action = 'incense'; bowlG.scale.setScalar(1.3);
 const censerTex = canvasTex(1024, 256, (g, w, h) => {
   const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#d1a03a'); gr.addColorStop(1, '#a8761c');
   g.fillStyle = gr; g.fillRect(0, 0, w, h);
@@ -596,58 +723,70 @@ const censerTex = canvasTex(1024, 256, (g, w, h) => {
 });
 censerTex.wrapS = THREE.RepeatWrapping; censerTex.repeat.set(2, 1);
 const censerM = std(0xffffff, { map: censerTex, bumpMap: censerTex, bumpScale: .01, metalness: .85, roughness: .32, envMapIntensity: 1, side: THREE.DoubleSide });
-// đế tròn
-bowlG.add(lathe([[0, 0], [.25, 0], [.26, .012], [.245, .025], [.25, .055], [.232, .068], [.2, .07], [0, .07]], M.gold));
-mesh(new THREE.TorusGeometry(.248, .008, 8, 48), M.bronze, 0, .04, 0, bowlG).rotation.x = Math.PI / 2;
-// ba chân quỳ mặt lân, đỡ quả cầu
 const eyeM = std(0x3a2008, { roughness: .6 });
-for (let k = 0; k < 3; k++){
-  const a = k * Math.PI * 2 / 3, leg = group(Math.sin(a) * .15, .07, Math.cos(a) * .15, bowlG); leg.rotation.y = a;
-  mesh(new THREE.SphereGeometry(.035, 16, 12), M.gold, 0, .035, 0, leg);
-  mesh(new THREE.CylinderGeometry(.03, .04, .09, 12), M.gold, 0, .11, 0, leg);
-  mesh(new THREE.SphereGeometry(.045, 16, 12), M.gold, 0, .15, .02, leg).scale.set(1, 1.1, .6);
-  for (const sx of [-1, 1]){ mesh(new THREE.SphereGeometry(.009, 8, 6), eyeM, sx * .016, .165, .047, leg); mesh(new THREE.SphereGeometry(.013, 8, 6), M.gold, sx * .02, .182, .04, leg) }
-  mesh(new THREE.SphereGeometry(.012, 8, 6), M.gold, 0, .145, .05, leg);
-}
-// thân bầu + vành miệng
-bowlG.add(lathe([[0, .17], [.11, .17], [.19, .2], [.25, .26], [.275, .32], [.27, .38], [.245, .42], [.235, .435], [.255, .445], [.272, .462], [.262, .478], [.236, .47], [.228, .452], [0, .452]], censerM, 64));
-// ô tròn chạm nổi trước/sau thân
-for (const sz of [1, -1]){
-  const md = group(0, .32, sz * .268, bowlG); md.rotation.y = sz > 0 ? 0 : Math.PI;
-  mesh(new THREE.CylinderGeometry(.065, .065, .014, 32), M.gold, 0, 0, 0, md).rotation.x = Math.PI / 2;
-  mesh(new THREE.TorusGeometry(.064, .007, 8, 40), M.bronze, 0, 0, .008, md);
-  mesh(new THREE.TorusGeometry(.03, .006, 8, 30, Math.PI * 1.6), M.bronze, 0, 0, .009, md);
-}
-// hai tai mây cuốn vươn cao
-function censerEar(side){
-  const g = group(side * .255, .44, 0, bowlG);
-  const curve = new THREE.CatmullRomCurve3([[0, 0], [.06, .06], [.07, .15], [.04, .23]].map(([x, y]) => new THREE.Vector3(side * x, y, 0)));
-  mesh(new THREE.TubeGeometry(curve, 24, .02, 8), M.gold, 0, 0, 0, g);
-  const head = group(side * .04, .29, 0, g);
-  [[0, .03, .055], [-.045, -.005, .04], [.05, -.01, .042], [0, -.045, .032]].forEach(([x, y, r]) => {
-    mesh(new THREE.CylinderGeometry(r, r, .03, 28), M.gold, side * x, y, 0, head).rotation.x = Math.PI / 2;
-    for (const sz of [1, -1]) mesh(new THREE.TorusGeometry(r * .6, .007, 6, 24, Math.PI * 1.6), M.bronze, side * x, y, sz * .017, head);
-  });
-  mesh(new THREE.TorusGeometry(.03, .01, 8, 24, Math.PI * 1.5), M.gold, side * .03, .02, 0, g);
-}
-censerEar(1); censerEar(-1);
-// mặt cát cắm hương
-mesh(new THREE.CircleGeometry(.228, 40), std(0x8a8170, { roughness: 1 }), 0, .453, 0, bowlG).rotation.x = -Math.PI / 2;
-
-// Nén hương
-const sticksG = group(0, .453, 0, bowlG);
 const bodyGeo = new THREE.CylinderGeometry(.0065, .0065, .42, 8); bodyGeo.translate(0, .21, 0);
 const stemGeo = new THREE.CylinderGeometry(.004, .004, .24, 6); stemGeo.translate(0, .12, 0);
 const stemMat = std(0xc0392b), bodyMat = std(0x5a2a14, { roughness: .9 });
-const sticks = [-.07, 0, .07].map(x => {
-  const s = group(x, 0, 0, sticksG); s.rotation.z = -x * 1.2;
-  mesh(stemGeo, stemMat, 0, -.06, 0, s);
-  const body = mesh(bodyGeo, bodyMat, 0, .18, 0, s);
-  const ember = mesh(new THREE.SphereGeometry(.008, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff5500 }), 0, .6, 0, s);
-  const glow = sprite(emberTex); glow.scale.setScalar(.07); ember.add(glow);
-  ember.visible = false; s.visible = false;
-  return { s, body, ember, glow };
-});
+// lư hương + 3 nén hương trên bàn thờ parent; trả về { bowlG, sticks }
+function censer(parent){
+  const bowlG = group(0, 1.2, .1, parent);
+  bowlG.userData.action = 'incense'; bowlG.scale.setScalar(1.3);
+  // đế tròn
+  bowlG.add(lathe([[0, 0], [.25, 0], [.26, .012], [.245, .025], [.25, .055], [.232, .068], [.2, .07], [0, .07]], M.gold));
+  mesh(new THREE.TorusGeometry(.248, .008, 8, 48), M.bronze, 0, .04, 0, bowlG).rotation.x = Math.PI / 2;
+  // ba chân quỳ mặt lân, đỡ quả cầu
+  for (let k = 0; k < 3; k++){
+    const a = k * Math.PI * 2 / 3, leg = group(Math.sin(a) * .15, .07, Math.cos(a) * .15, bowlG); leg.rotation.y = a;
+    mesh(new THREE.SphereGeometry(.035, 16, 12), M.gold, 0, .035, 0, leg);
+    mesh(new THREE.CylinderGeometry(.03, .04, .09, 12), M.gold, 0, .11, 0, leg);
+    mesh(new THREE.SphereGeometry(.045, 16, 12), M.gold, 0, .15, .02, leg).scale.set(1, 1.1, .6);
+    for (const sx of [-1, 1]){ mesh(new THREE.SphereGeometry(.009, 8, 6), eyeM, sx * .016, .165, .047, leg); mesh(new THREE.SphereGeometry(.013, 8, 6), M.gold, sx * .02, .182, .04, leg) }
+    mesh(new THREE.SphereGeometry(.012, 8, 6), M.gold, 0, .145, .05, leg);
+  }
+  // thân bầu + vành miệng
+  bowlG.add(lathe([[0, .17], [.11, .17], [.19, .2], [.25, .26], [.275, .32], [.27, .38], [.245, .42], [.235, .435], [.255, .445], [.272, .462], [.262, .478], [.236, .47], [.228, .452], [0, .452]], censerM, 64));
+  // ô tròn chạm nổi trước/sau thân
+  for (const sz of [1, -1]){
+    const md = group(0, .32, sz * .268, bowlG); md.rotation.y = sz > 0 ? 0 : Math.PI;
+    mesh(new THREE.CylinderGeometry(.065, .065, .014, 32), M.gold, 0, 0, 0, md).rotation.x = Math.PI / 2;
+    mesh(new THREE.TorusGeometry(.064, .007, 8, 40), M.bronze, 0, 0, .008, md);
+    mesh(new THREE.TorusGeometry(.03, .006, 8, 30, Math.PI * 1.6), M.bronze, 0, 0, .009, md);
+  }
+  // hai tai mây cuốn vươn cao
+  const censerEar = side => {
+    const g = group(side * .255, .44, 0, bowlG);
+    const curve = new THREE.CatmullRomCurve3([[0, 0], [.06, .06], [.07, .15], [.04, .23]].map(([x, y]) => new THREE.Vector3(side * x, y, 0)));
+    mesh(new THREE.TubeGeometry(curve, 24, .02, 8), M.gold, 0, 0, 0, g);
+    const head = group(side * .04, .29, 0, g);
+    [[0, .03, .055], [-.045, -.005, .04], [.05, -.01, .042], [0, -.045, .032]].forEach(([x, y, r]) => {
+      mesh(new THREE.CylinderGeometry(r, r, .03, 28), M.gold, side * x, y, 0, head).rotation.x = Math.PI / 2;
+      for (const sz of [1, -1]) mesh(new THREE.TorusGeometry(r * .6, .007, 6, 24, Math.PI * 1.6), M.bronze, side * x, y, sz * .017, head);
+    });
+    mesh(new THREE.TorusGeometry(.03, .01, 8, 24, Math.PI * 1.5), M.gold, side * .03, .02, 0, g);
+  };
+  censerEar(1); censerEar(-1);
+  // mặt cát cắm hương
+  mesh(new THREE.CircleGeometry(.228, 40), std(0x8a8170, { roughness: 1 }), 0, .453, 0, bowlG).rotation.x = -Math.PI / 2;
+
+  // Nén hương
+  const sticksG = group(0, .453, 0, bowlG);
+  const sticks = [-.07, 0, .07].map(x => {
+    const s = group(x, 0, 0, sticksG); s.rotation.z = -x * 1.2;
+    mesh(stemGeo, stemMat, 0, -.06, 0, s);
+    const body = mesh(bodyGeo, bodyMat, 0, .18, 0, s);
+    const ember = mesh(new THREE.SphereGeometry(.008, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff5500 }), 0, .6, 0, s);
+    const glow = sprite(emberTex); glow.scale.setScalar(.07); ember.add(glow);
+    ember.visible = false; s.visible = false;
+    return { s, body, ember, glow };
+  });
+  return { bowlG, sticks };
+}
+// bàn thờ chính, hai bàn thờ Bồ Tát và hai bàn thờ trước tranh bày đồ lễ giống nhau
+const ALTARS = [altar, ...sideAltars, ...artAltars];
+const censers = ALTARS.map(censer);
+// khói: lư hương bàn chính toả đều, các lư hương phụ toả thưa (SIDE_SMOKE) để bớt số hạt khói phải vẽ
+const SIDE_SMOKE = .3;
+const bowls = censers.map(c => c.bowlG), sticks = censers.flatMap((c, i) => c.sticks.map(st => Object.assign(st, { smoke: i ? SIDE_SMOKE : 1 })));
 
 // hình khối mô hình nhúng sẵn (base64): pos Float32 xyz, idx Uint32, uv Float32 (nếu có)
 function modelGeo(data){
@@ -665,8 +804,8 @@ const ALTAR_CANDLE_H = .9;
 const candleGeo = window.GIA_NEN && { gia: modelGeo(GIA_NEN.gia), nen: modelGeo(GIA_NEN.nen), tim: modelGeo(GIA_NEN.tim) };
 const copperM = std(0x7a4424, { metalness: .9, roughness: .4, envMapIntensity: .9, side: THREE.DoubleSide });
 const waxM = std(0xb3261e, { roughness: .6, side: THREE.DoubleSide }), wickM = new THREE.MeshBasicMaterial({ color: 0x111111 });
-function candle(x){
-  const g = group(x, 1.57, -.48, altar); g.userData.action = 'candle';
+function candle(x, parent){
+  const g = group(x, 1.57, -.48, parent); g.userData.action = 'candle';
   let top = .575;
   if (candleGeo){
     for (const [geo, mat] of [[candleGeo.gia, copperM], [candleGeo.nen, waxM], [candleGeo.tim, wickM]]) mesh(geo, mat, 0, 0, 0, g).scale.setScalar(ALTAR_CANDLE_H);
@@ -678,11 +817,13 @@ function candle(x){
   }
   const flame = sprite(flameTex); flame.center.set(.5, .2); flame.position.y = top; g.add(flame);
   const halo = sprite(emberTex, 0xffaa55); halo.position.y = top + .045; g.add(halo);
-  const light = new THREE.PointLight(0xff9a40, 0, 7, 2); light.position.y = top + .125; g.add(light);
+  // chỉ nến bàn thờ chính rọi sáng thật; nến bàn phụ chỉ có ngọn lửa + quầng sáng (mỗi đèn thật làm nặng cả cảnh)
+  let light = null;
+  if (parent === altar){ light = new THREE.PointLight(0xff9a40, 0, 7, 2); light.position.y = top + .125; g.add(light) }
   flame.visible = halo.visible = false;
   return { g, flame, halo, light, flameS: 1.2, lit: false, level: 0, seed: Math.random() * 10 };
 }
-const candles = [candle(-1.5), candle(1.5)];
+const candles = ALTARS.flatMap(a => [candle(-1.5, a), candle(1.5, a)]);
 
 // Giá nến 7 ngọn đứng dưới sàn bên phải bàn thờ (đối diện hòm công đức), dựng từ mẫu Candlestick N040419 (3 nhánh):
 // kéo dài đoạn thân trơn, thêm 2 tầng tay (kéo dài + hạ thấp) mỗi bên → 1 đài giữa + 6 đài tay
@@ -732,7 +873,10 @@ function candelabra(x, z, ry){
   const light = new THREE.PointLight(0xff9a40, 0, 7, 2); light.position.y = CANDLE_H + .15; g.add(light);
   return { g, lights, light };
 }
-const candelabras = [candelabra(4.3, -1.6, -.35)];
+// đứng dưới sàn trước bàn thờ Quan Âm (hòm công đức đối xứng trước bàn thờ Địa Tạng)
+// đứng dưới sàn sát mé ngoài bàn thờ Quan Âm (hòm công đức đối xứng bên mé ngoài bàn thờ Địa Tạng)
+const SIDE_OUT_X = SIDE_X + SIDE_DE_W / 2 + .7;
+const candelabras = [candelabra(SIDE_OUT_X, SIDE_ALTAR_Z, -.35)];
 const candles7 = candelabras.flatMap(cb => cb.lights);
 
 // Bình hoa: mỗi lần dâng hương cắm sen (mẫu lotus_2012: bông + thân)
@@ -748,13 +892,17 @@ const lotusParts = window.HOA_SEN && (() => {
   for (let i = 0; i < thanP.count; i++) if (Math.abs(thanP.getY(i) - hm) < .02){ sx += thanP.getX(i); sz += thanP.getZ(i); sn++ }
   const off = [-(sn ? sx / sn : 0), -hm, -(sn ? sz / sn : 0)];
   const g = d => { const geo = modelGeo(d); geo.translate(...off); geo.computeBoundingSphere(); return geo };
-  return [
+  const canhGeo = g(HOA_SEN.canh); canhGeo.computeBoundingBox();
+  const parts = [
     // cánh mỏng: tự sáng nhẹ theo vân để mặt khuất đèn vẫn giữ màu hồng
-    [g(HOA_SEN.canh), std(0xffffff, { map: petalTex, emissive: 0xffffff, emissiveMap: petalTex, emissiveIntensity: .35, roughness: .55, side: THREE.DoubleSide })],
+    [canhGeo, std(0xffffff, { map: petalTex, emissive: 0xffffff, emissiveMap: petalTex, emissiveIntensity: .35, roughness: .55, side: THREE.DoubleSide })],
     [g(HOA_SEN.than), std(0xffffff, { map: tex(HOA_SEN.texThan), roughness: .6, side: THREE.DoubleSide })],
     [g(HOA_SEN.guong), std(0xc9c24a, { roughness: .6, side: THREE.DoubleSide })],
     [g(HOA_SEN.nhuy), std(0xf4c430, { roughness: .5, emissive: 0x2a1a00, side: THREE.DoubleSide })]
   ];
+  const c = canhGeo.boundingBox.getCenter(new THREE.Vector3());
+  parts.head = { x: c.x, z: c.z };
+  return parts;
 })();
 const FLOWER_TYPES = { sen: { name: 'sen' } };
 const pickFlowerMix = () => ['sen'];
@@ -762,24 +910,45 @@ const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
 function fillBouquet(b){
   b.clear();
   if (!lotusParts) return;
-  const n = 3, a0 = Math.random() * Math.PI * 2;
-  for (let i = 0; i < n; i++){
-    const s = group(0, .03, 0, b);                    // xoay quanh tâm miệng bình (bình cao .41, bó hoa đặt ở .38)
-    s.rotation.set((Math.random() - .5) * .1, a0 + i / n * Math.PI * 2 + (Math.random() - .5) * .5, (Math.random() - .5) * .1);
+  // ba nhánh cao – vừa – thấp (rút bớt thân xuống trong bình); bông thấp nghiêng ra mé ngoài bàn thờ,
+  // bông cao ngả vào mé trong phía sau, bông vừa ngả ra trước
+  const side = b.userData.side || 1;
+  const head = lotusParts.head;                       // hướng ngả của bông so với gốc thân (mẫu chưa xoay)
+  const toward = (dx, dz) => Math.atan2(head.x, head.z) - Math.atan2(dx, dz);
+  // xoè hình quạt theo bề ngang để nhìn từ ngoài vào thân không che bông: cao ở giữa hơi lùi, vừa ngả vào trong, thấp ngả ra ngoài và ra trước
+  const stems = [[.14, toward(0, -.4)], [0, toward(-side, .25)], [-.16, toward(side, .45)]];
+  for (const [lift, ang] of stems){
+    const s = group(0, .03 + lift, 0, b);             // xoay quanh tâm miệng bình
+    s.rotation.set((Math.random() - .5) * .06, ang + (Math.random() - .5) * .2, (Math.random() - .5) * .06);
     s.scale.setScalar(LOTUS_H * (.88 + Math.random() * .2));
     for (const [geo, mat] of lotusParts) mesh(geo, mat, 0, 0, 0, s);
   }
   b.traverse(o => { if (o.isMesh) o.castShadow = true });
 }
-function vase(x){
-  const g = group(x, 1.57, -.48, altar);
-  g.add(lathe([[0, 0], [.07, 0], [.075, .02], [.1, .08], [.115, .16], [.1, .24], [.06, .3], [.045, .36], [.055, .4], [.06, .41]], M.porcelain));
-  mesh(new THREE.TorusGeometry(.113, .008, 8, 40), std(0x1f4e9c), 0, .16, 0, g).rotation.x = Math.PI / 2;
-  const bouquet = group(0, .38, 0, g);
-  bouquet.visible = false; bouquet.scale.setScalar(.001);
+// bình sứ men lam có đôn gỗ (mẫu nhúng: cao 1, đáy y = 0) — data/binh-hoa.js, data/binh-lon.js
+function porcelainMesh(data, h, x, y, z, parent){
+  const tex = loader.load(data.tex); tex.encoding = THREE.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const m = mesh(modelGeo(data), std(0xffffff, { map: tex, roughness: .25, envMapIntensity: .8 }), x, y, z, parent);
+  m.scale.setScalar(h);
+  return m;
+}
+const VASE_H = .64;   // bằng giá đồng cắm nến (không tính cây nến)
+function vase(x, parent){
+  const g = group(x, 1.57, -.48, parent);
+  if (window.BINH_HOA) porcelainMesh(BINH_HOA, VASE_H, 0, 0, 0, g);
+  else g.add(lathe([[0, 0], [.07, 0], [.075, .02], [.1, .08], [.115, .16], [.1, .24], [.06, .3], [.045, .36], [.055, .4], [.06, .41]], M.porcelain));
+  const bouquet = group(0, window.BINH_HOA ? VASE_H - .03 : .38, 0, g);
+  bouquet.visible = false; bouquet.scale.setScalar(.001); bouquet.userData.side = Math.sign(x);
   return bouquet;
 }
-const bouquets = [vase(-.85), vase(.85)];
+const bouquets = ALTARS.flatMap(a => [vase(-.85, a), vase(.85, a)]);
+// hai bình sứ lớn đứng dưới sàn hai bên tượng, giữa hàng cột và tường
+// cỡ gốc 5.2: bề ngang giảm 50%, chiều cao giảm 30%
+if (window.BINH_LON) for (const sx of [-1, 1]){
+  // đứng đúng chỗ cặp cột sát tường đã bỏ, thẳng hàng với hàng cột
+  const b = porcelainMesh(BINH_LON, 1, sx * PILLAR_X, 0, PILLAR_ZS[0] + .4, scene);
+  b.scale.set(5.2 * .5, 5.2 * .7, 5.2 * .5); b.rotation.y = sx * -.4;
+}
 
 // Mâm quả: mỗi lần dâng một loại quả khác
 const fruitGeo = new THREE.SphereGeometry(.05, 16, 12), smallFruitGeo = new THREE.SphereGeometry(.022, 10, 8);
@@ -831,43 +1000,48 @@ function fillPlate(fr, used){
   }
   fr.traverse(o => { if (o.isMesh) o.castShadow = true });
 }
-function plate(x){
-  const g = group(x, 1.2, .4, altar);
+function plate(x, parent){
+  const g = group(x, 1.2, .4, parent);
   g.add(lathe([[0, 0], [.07, 0], [.05, .02], [.035, .07], [.06, .09], [.17, .11], [.19, .13], [.17, .125], [0, .1]], M.gold));
   const fr = group(0, .11, 0, g);
   fr.visible = false; fr.scale.setScalar(.001);
   return fr;
 }
-const plates = [plate(-.78), plate(.78)];
+const plates = ALTARS.flatMap(a => [plate(-.78, a), plate(.78, a)]);
 
 // Đèn hoa sen (mẫu Sconce): mẫu gắn tường hoa hướng ra ngang → xoay dựng đứng cho hoa ngửa lên,
 // đặt trên chân đế vàng hai bên mâm quả; sáng khi hương đang cháy
 const LOTUS_LAMP_S = .075;
 const lotusLampGeo = window.DEN_SEN && { hoa: modelGeo(DEN_SEN.hoa), phu: modelGeo(DEN_SEN.phu) };
 const lotusLampM = std(0xf08aae, { roughness: .45, emissive: 0xff3f80, emissiveIntensity: 0, side: THREE.DoubleSide });
-const lotusLamps = [-1.32, 1.32].map(x => {
-  const g = group(x, 1.2, .4, altar);
+const lotusLamps = ALTARS.flatMap(a => [-1.32, 1.32].map(x => [a, x])).map(([a, x]) => {
+  const g = group(x, 1.2, .4, a);
   g.add(lathe([[0, 0], [.09, 0], [.09, .015], [.035, .03], [.022, .1], [.04, .12], [0, .12]], M.gold, 32));
   let light = null;
   if (lotusLampGeo){
     const m = group(0, .12, 0, g); m.rotation.x = -Math.PI / 2; m.scale.setScalar(LOTUS_LAMP_S);
     mesh(lotusLampGeo.hoa, lotusLampM, 0, 0, 0, m);
     mesh(lotusLampGeo.phu, M.gold, 0, 0, 0, m);
-    light = new THREE.PointLight(0xff9ab8, 0, 4, 2); light.position.y = .12 + 1 * LOTUS_LAMP_S; g.add(light);
+    // như nến: chỉ đèn sen bàn chính rọi sáng thật, đèn sen bàn phụ chỉ tự sáng (lotusLampM)
+    if (a === altar){ light = new THREE.PointLight(0xff9ab8, 0, 4, 2); light.position.y = .12 + 1 * LOTUS_LAMP_S; g.add(light) }
   }
   return { g, light };
 });
 let lotusLampLevel = 0, lotusLampOn = false;
 
 // Chén trà
-const tea = group(0, 1.2, .64, altar);
-const teaSet = group(0, 0, 0, tea); teaSet.scale.setScalar(1.8);   // khay + 3 chén phóng to (tea tự co giãn khi dâng)
-mesh(new THREE.BoxGeometry(.52, .015, .16), M.wood, 0, .008, 0, teaSet);
-[-.16, 0, .16].forEach(x => {
-  mesh(new THREE.CylinderGeometry(.032, .024, .045, 16), M.porcelain, x, .038, 0, teaSet);
-  mesh(new THREE.CircleGeometry(.029, 16), std(0x9a5a12, { roughness: .1 }), x, .056, 0, teaSet).rotation.x = -Math.PI / 2;
+const teaM = std(0x9a5a12, { roughness: .1 });
+const teas = ALTARS.map(a => {
+  const tea = group(0, 1.2, .64, a);
+  const teaSet = group(0, 0, 0, tea); teaSet.scale.setScalar(1.8);   // khay + 3 chén phóng to (tea tự co giãn khi dâng)
+  mesh(new THREE.BoxGeometry(.52, .015, .16), M.wood, 0, .008, 0, teaSet);
+  [-.16, 0, .16].forEach(x => {
+    mesh(new THREE.CylinderGeometry(.032, .024, .045, 16), M.porcelain, x, .038, 0, teaSet);
+    mesh(new THREE.CircleGeometry(.029, 16), teaM, x, .056, 0, teaSet).rotation.x = -Math.PI / 2;
+  });
+  tea.visible = false; tea.scale.setScalar(.001);
+  return tea;
 });
-tea.visible = false; tea.scale.setScalar(.001);
 
 /* ================= Tượng thờ sau bàn thờ: Địa Tạng – Phật – Quan Âm cùng hàng ================= */
 // Tô màu tượng theo vùng (toạ độ chuẩn hoá của mô hình, cao 1): mặc định áo vàng kim;
@@ -948,27 +1122,110 @@ function statueMesh(data, h, x, y, z, parent, regions, side){
   const m = mesh(modelGeo(data), mat, x, y, z, parent); m.scale.setScalar(h);
   return m;
 }
+// nhóm đặt đài sen + tượng trên mặt bệ, phóng to STATUE_S quanh mặt bệ
+function seatGroup(parent){ const g = group(0, PEDESTAL_TOP, 0, parent); g.scale.setScalar(STATUE_S); return g }
 // bệ sát tường cho tượng Phật lớn (mẫu gốc, đế lá vươn ra trước bệ)
-const buddhaG = group(0, 0, -4.85);
-// kệ rộng bằng đế lá sen, sâu từ sát tường ra trước
-mesh(new THREE.BoxGeometry(5.1, .1, 3.5), woodM, 0, .05, .62, buddhaG);
-mesh(new THREE.BoxGeometry(4.9, 1.98, 3.4), frontOnly(carvedM(drawerTexture(2048, 830))), 0, 1.09, .62, buddhaG);
-mesh(new THREE.BoxGeometry(5.1, .12, 3.5), woodM, 0, 2.14, .62, buddhaG);
-mesh(new THREE.BoxGeometry(5.12, .015, 3.52), M.gold, 0, 2.08, .62, buddhaG);
-if (window.TUONG_PHAT) statueMesh(TUONG_PHAT, 5, 0, 2.2, 0, buddhaG, PAINT_PHAT);
+const buddhaG = group(0, 0, PHAT_Z);
+// bệ đặt tượng: bệ đồng chạm rồng cắt từ tượng sư tử (data/de-su-tu.js), giữ nguyên ảnh vân gốc.
+// Mẫu cao 1, rộng x .844, sâu z 1.177; xoay 90° cho mặt dài (chạm rồng to) quay ra phía trước, mặt bệ ở y = 2.2
+const deSuTu = window.DE_SU_TU && DE_SU_TU.map(p => {
+  const t = loader.load(p.tex); t.encoding = THREE.sRGBEncoding; t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return [modelGeo(p), std(0xffffff, { map: t, roughness: .5, metalness: .3, envMapIntensity: .6 })];
+});
+// mặt phẳng trên của bệ ở y = DE_TOP của mẫu (phía trên là gờ viền mỏng) → kéo cao để mặt phẳng đúng 2.2, khít đáy đài sen.
+// Mẫu cắt ra nên hở miệng trên (nhìn xuống thấy lòng tối như khe hở dưới đài sen) → đậy nắp đồng kín mặt trên
+// (mặt trên rộng x ±.40, z ±.536 theo mẫu)
+const DE_TOP = .975, deCapM = std(0x4a2e16, { roughness: .45, metalness: .5, envMapIntensity: .6 });
+function deTuong(parent, w, d, z = 0){
+  if (!deSuTu) return false;
+  const g = group(0, 0, z, parent); g.rotation.y = Math.PI / 2; g.scale.set(d / .844, 2.2 / DE_TOP, w / 1.177);
+  for (const [geo, mat] of deSuTu) mesh(geo, mat, 0, 0, 0, g);
+  mesh(new THREE.BoxGeometry(.81, .02, 1.08), deCapM, 0, DE_TOP - .01, 0, g);
+  return true;
+}
+if (!deTuong(buddhaG, PHAT_DE_W, PHAT_DE_D, PHAT_DE_Z)){
+  mesh(new THREE.BoxGeometry(PHAT_DE_W, 1.98, PHAT_DE_D), frontOnly(carvedM(drawerTexture(2048, 830))), 0, 1.09, PHAT_DE_Z, buddhaG);
+  mesh(new THREE.BoxGeometry(PHAT_DE_W + .26, .12, PHAT_DE_D + .1), woodM, 0, 2.14, PHAT_DE_Z, buddhaG);
+}
+// đế sen chân cột (chép từ Quan Âm, lotusBaseGeo: cao .247, bán kính ~.31) dùng chung cho Phật và Địa Tạng
+const LOTUS_BASE_R = .31, LOTUS_BASE_TOP = LOTUS_Y1 - LOTUS_Y0;
+// đài sen chung cho cả 3 tượng: cắt từ tượng Quan Âm đứng (data/dai-sen.js; cao 1, bán kính đế ~.88)
+// Mẫu bị nghiêng ~6° chúi về trước: đáy cắt theo mặt phẳng y = .085 - .0111x - .1042z (đo trên mép đáy, sai số < .01),
+// nên chỉ mép trước chạm bệ, phía sau kênh lên .16 → xoay cho đáy nằm phẳng, đặt đáy về y = 0, tâm đáy về giữa
+const DAI_SEN_R = .88;
+let DAI_SEN_SEAT = window.DAI_SEN && DAI_SEN.seat;
+const daiSenGeo = window.DAI_SEN && (() => {
+  const geo = modelGeo(DAI_SEN);
+  const rot = new THREE.Matrix4().makeRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(
+    new THREE.Vector3(.0111, 1, .1042).normalize(), new THREE.Vector3(0, 1, 0)));
+  geo.applyMatrix4(rot);
+  const seat = new THREE.Vector3(0, DAI_SEN.seat, .05).applyMatrix4(rot);   // tâm lòng sen
+  geo.computeBoundingBox(); const b = geo.boundingBox;
+  geo.translate(-(b.min.x + b.max.x) / 2, -b.min.y, -(b.min.z + b.max.z) / 2);
+  DAI_SEN_SEAT = seat.y - b.min.y;
+  geo.computeVertexNormals();
+  return geo;
+})();
+// trả về độ cao mặt lòng sen (nơi tượng ngồi), có đậy nắp vàng kín lòng sen; r = bán kính đế, h = chiều cao đài
+function lotusSeat(parent, y, r, h){
+  if (daiSenGeo){
+    const sr = r / DAI_SEN_R;
+    mesh(daiSenGeo, statueM, 0, y, 0, parent).scale.set(sr, h, sr);
+    const seatY = y + DAI_SEN_SEAT * h;
+    // nắp lòng sen rộng tới chân cánh sen để che kín mép cắt của tượng
+    mesh(new THREE.CylinderGeometry(.64 * sr, .64 * sr, .06 * h, 64), statueM, 0, seatY - .05 * h, 0, parent);
+    return seatY;
+  }
+  if (!lotusBaseGeo) return y;
+  const sr = r / LOTUS_BASE_R, sh = h / LOTUS_BASE_TOP;
+  mesh(lotusBaseGeo, statueM, 0, y, 0, parent).scale.set(sr, sh, sr);
+  const seatY = y + (.29 - LOTUS_Y0) * sh;
+  mesh(new THREE.CylinderGeometry(.27 * sr, .27 * sr, .02 * sh, 48), statueM, 0, seatY, 0, parent);
+  mesh(new THREE.CylinderGeometry(.243 * sr, .243 * sr, .02 * sh, 48), statueM, 0, y + (LOTUS_MID - LOTUS_Y0) * sh + .01 * sh, 0, parent);
+  return seatY;
+}
+// tượng Phật: chỉ bỏ đế lá (phần dưới PHAT_CUT), giữ nguyên thân và tà áo; ngồi trên đế sen chân cột
+// cắt ở .275: bỏ hết vòng cánh sen gốc của mẫu, giữ trọn chân xếp bằng (lòng chân bắt đầu ~.28) — đáy hở nằm trên nắp đài
+const SEAT_SINK = .14;
+// đài sen cùng tỉ lệ cho cả 3 tượng (theo Địa Tạng): bán kính SEAT_R, cao SEAT_H cho tượng cao SIDE_H; Phật phóng theo chiều cao tượng
+const SEAT_R = 1.4, SEAT_H = 1.33;
+// cắt ở .2: chỉ bỏ đế lá, giữ nguyên vành đài sen gốc của tượng ngồi lên đài sen mới
+const PHAT_H = 5, PHAT_CUT = .2, PHAT_SEAT_R = SEAT_R * 5 / 3.5, PHAT_SEAT_H = SEAT_H * 5 / 3.5;
+const phatG = seatGroup(buddhaG);
+const phatSeatY = lotusSeat(phatG, 0, PHAT_SEAT_R, PHAT_SEAT_H);
+if (window.TUONG_PHAT){
+  // hạ tượng SEAT_SINK để mép cắt răng cưa chìm dưới nắp lòng sen
+  const m = statueMesh(TUONG_PHAT, PHAT_H, 0, phatSeatY - PHAT_CUT * PHAT_H, 0, phatG, PAINT_PHAT);
+  cutFlat(m.geometry, PHAT_CUT);
+}
 // hai Bồ Tát cùng hàng với tượng Phật, bệ cùng độ cao 2.2: Địa Tạng bên trái, Quan Âm bên phải
-const SIDE_H = 3.5, SIDE_X = 3.9, SIDE_Z = -4.7;
+const SIDE_H = 3.5;
 function sidePedestal(x){
-  const g = group(x, 0, SIDE_Z);
-  mesh(new THREE.BoxGeometry(2.6, .1, 2.6), woodM, 0, .05, 0, g);
-  mesh(new THREE.BoxGeometry(2.44, 1.98, 2.44), frontOnly(carvedM(drawerTexture(1400, 1140))), 0, 1.09, 0, g);
-  mesh(new THREE.BoxGeometry(2.6, .12, 2.6), woodM, 0, 2.14, 0, g);
-  mesh(new THREE.BoxGeometry(2.62, .015, 2.62), M.gold, 0, 2.08, 0, g);
+  const g = group(x, 0, SIDE_Z), w = SIDE_DE_W;
+  if (!deTuong(g, w, w)){
+    mesh(new THREE.BoxGeometry(w - .16, 1.98, w - .16), frontOnly(carvedM(drawerTexture(1400, 900))), 0, 1.09, 0, g);
+    mesh(new THREE.BoxGeometry(w, .12, w), woodM, 0, 2.14, 0, g);
+  }
   return g;
 }
 const statueG = sidePedestal(SIDE_X);
 // Quan Âm: bỏ phần đế bậc dưới cùng (y < QA_CUT), giữ từ vòng cánh sen úp trở lên; hạ tượng để cánh sen chạm mặt bệ
-const QA_CUT = .088, QA_SCALE = SIDE_H / (1 - QA_CUT); // phần còn lại cao đúng SIDE_H như Địa Tạng
+// giờ bỏ cả đài sen gốc (dưới QA_CUT), ngồi trên đài sen chung như Phật và Địa Tạng; cỡ tượng giữ như trước
+const QA_CUT = .26, QA_SCALE = SIDE_H / (1 - .088);
+// cắt phẳng: bỏ tam giác nằm hẳn dưới y0, còn tam giác cắt ngang thì ép các đỉnh dưới y0 lên đúng y0
+// → mép cắt là một đường thẳng nằm sát mặt lòng sen, không còn răng cưa
+function cutFlat(geo, y0){
+  const p = geo.attributes.position, idx = geo.index.array, keep = [], low = new Set();
+  for (let i = 0; i < idx.length; i += 3){
+    const ys = [p.getY(idx[i]), p.getY(idx[i + 1]), p.getY(idx[i + 2])];
+    if (Math.max(...ys) < y0) continue;
+    keep.push(idx[i], idx[i + 1], idx[i + 2]);
+    for (let k = 0; k < 3; k++) if (ys[k] < y0) low.add(idx[i + k]);
+  }
+  for (const v of low) p.setY(v, y0);
+  geo.setIndex(keep); p.needsUpdate = true; geo.computeVertexNormals();
+  return geo;
+}
 function cutBelow(geo, y0){
   const p = geo.attributes.position, idx = geo.index.array, keep = [];
   for (let i = 0; i < idx.length; i += 3)
@@ -977,36 +1234,62 @@ function cutBelow(geo, y0){
   return geo;
 }
 if (window.QUAN_AM){
-  const qa = statueMesh(QUAN_AM, QA_SCALE, 0, 2.2 - QA_CUT * QA_SCALE, 0, statueG, PAINT_QUAN_AM);
+  const qaG = seatGroup(statueG);
+  const qaSeatY = lotusSeat(qaG, 0, SEAT_R, SEAT_H);
+  const qa = statueMesh(QUAN_AM, QA_SCALE, 0, qaSeatY - QA_CUT * QA_SCALE - SEAT_SINK, 0, qaG, PAINT_QUAN_AM);
   cutBelow(qa.geometry, QA_CUT); qa.rotation.y = Math.PI;
 }
 const diaTangG = sidePedestal(-SIDE_X);
 // Địa Tạng: vẽ hai mặt vì các phần được lật đối xứng trong 3ds Max bị đảo chiều mặt tam giác
-if (window.DIA_TANG) statueMesh(DIA_TANG, SIDE_H, 0, 2.2, 0, diaTangG, PAINT_DIA_TANG, THREE.DoubleSide);
+// Địa Tạng: mẫu đã bỏ đế sen gốc (cao .235, bán kính .336 theo chiều cao tượng) → thay bằng đế sen chân cột cùng cỡ
+// đế cỡ như đế gốc; tượng hạ thấp DT_SINK để tà áo rủ phủ lên mép cánh sen (đáy tượng gốc ở y .235)
+const DT_SINK = 0;
+// đài nhỏ hơn thân tượng để tà áo rủ phủ ra ngoài mép cánh sen
+const dtG = seatGroup(diaTangG);
+const dtSeatY = lotusSeat(dtG, 0, SEAT_R, SEAT_H);
+if (window.DIA_TANG) statueMesh(DIA_TANG, SIDE_H, 0, dtSeatY - (.235 + DT_SINK) * SIDE_H - .06, 0, dtG, PAINT_DIA_TANG, THREE.DoubleSide);
 
 /* ================= Chuông & Mõ ================= */
 function stool(x){
-  const g = group(x, 0, .9);
+  const g = group(x, 0, XAM_Z);
   mesh(new THREE.BoxGeometry(.55, .4, .55), M.wood, 0, .2, 0, g);
   mesh(new THREE.CylinderGeometry(.2, .22, .07, 24), M.red, 0, .435, 0, g);
   const mallet = mesh(new THREE.CylinderGeometry(.016, .016, .32, 8), std(0x6b3a1e), 0, .41, .22, g);
   mallet.rotation.z = Math.PI / 2;
   return g;
 }
-const bellG = stool(2.75); bellG.userData.action = 'bell';
+// ghế chuông, ghế mõ đứng sát hai đầu bàn xăm
+const bellG = stool(XAM_W / 2 + .45); bellG.userData.action = 'bell';
 const bellMesh = lathe([[0, 0], [.1, 0], [.16, .03], [.2, .08], [.225, .15], [.235, .23], [.225, .235], [.215, .16], [.19, .09], [.15, .045], [0, .035]], M.bronze);
 bellMesh.position.y = .47; bellG.add(bellMesh);
 const ring = mesh(new THREE.TorusGeometry(.24, .006, 8, 64), new THREE.MeshBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 0 }), 0, .7, 0, bellG);
 ring.rotation.x = Math.PI / 2;
 
-const moG = stool(-2.75); moG.userData.action = 'mo';
+const moG = stool(-XAM_W / 2 - .45); moG.userData.action = 'mo';
 const moMesh = mesh(new THREE.SphereGeometry(.19, 32, 20), std(0x7a3e16, { roughness: .4 }), 0, .6, 0, moG);
 moMesh.scale.set(1.15, .8, 1);
 mesh(new THREE.TorusGeometry(.1, .012, 8, 24, Math.PI), std(0x2a1005), 0, .58, .17, moG).rotation.z = Math.PI;
 
+// Đệm lạy (bồ đoàn) tròn bọc vải vàng, đặt trước bàn xăm
+const camM = std(0xc9922e, { roughness: .85 });
+const camG = group(0, 0, XAM_Z + 1);
+if (lotusBaseGeo){
+  // bồ đoàn hình đài sen như chân cột, giữ màu cũ: thân vải vàng, mặt ngồi vàng sẫm, viền đỏ dưới chân
+  const s = .36 / .30;                                   // bán kính ~.36 như đệm cũ
+  mesh(lotusBaseGeo, camM, 0, 0, 0, camG).scale.set(s, .85 * s, s);  // hơi dẹt cho thấp như đệm
+  const top = (.29 - LOTUS_Y0) * .85 * s;
+  mesh(new THREE.CylinderGeometry(.26 * s, .26 * s, .03, 40), std(0xb07a22, { roughness: .9 }), 0, top, 0, camG);
+  mesh(new THREE.TorusGeometry(.33, .02, 8, 40), std(0x8e1b1b, { roughness: .8 }), 0, .02, 0, camG).rotation.x = Math.PI / 2;
+} else {
+  mesh(new THREE.CylinderGeometry(.34, .36, .12, 40), camM, 0, .07, 0, camG);
+  mesh(new THREE.TorusGeometry(.345, .045, 12, 40), camM, 0, .13, 0, camG).rotation.x = Math.PI / 2;
+  mesh(new THREE.CircleGeometry(.33, 40), std(0xb07a22, { roughness: .9 }), 0, .131, 0, camG).rotation.x = -Math.PI / 2;
+  mesh(new THREE.TorusGeometry(.355, .02, 8, 40), std(0x8e1b1b, { roughness: .8 }), 0, .02, 0, camG).rotation.x = Math.PI / 2;
+}
+
 /* ================= Ống xăm (chính giữa, dưới bàn thờ) ================= */
 // ống xăm đặt trên bàn thờ thấp (mặt bàn cao .6)
-const xamG = group(0, .6, 1.15); xamG.userData.action = 'xam'; xamG.scale.setScalar(1.3);
+const xamG = group(0, .6, XAM_Z); xamG.userData.action = 'xam'; xamG.scale.setScalar(1.3);
 const tube = group(0, 0, 0, xamG);
 mesh(new THREE.CylinderGeometry(.085, .078, .34, 28, 1, true), std(0xc9a15a, { roughness: .55, side: THREE.DoubleSide }), 0, .17, 0, tube);
 mesh(new THREE.CircleGeometry(.078, 28), std(0x7a5a28), 0, .01, 0, tube).rotation.x = -Math.PI / 2;
@@ -1025,8 +1308,8 @@ const xamSticks = Array.from({ length: 24 }, (_, i) => {
 });
 
 /* ================= Hòm công đức (cạnh bàn thờ) ================= */
-// đặt hẳn bên trái bàn thờ (ngoài chân bàn, sau ghế mõ), hơi xoay vào giữa
-const hopG = group(-4.3, 0, -1.6); hopG.userData.action = 'congduc'; hopG.rotation.y = .35; hopG.scale.setScalar(1.6);
+// đứng dưới sàn sát mé ngoài bàn thờ Địa Tạng (bên trái), hơi xoay vào giữa
+const hopG = group(-SIDE_OUT_X, 0, SIDE_ALTAR_Z); hopG.userData.action = 'congduc'; hopG.rotation.y = .35; hopG.scale.setScalar(1.6);
 const hopRed = std(0x8e1a12, { roughness: .3, envMapIntensity: .55 });
 mesh(new THREE.BoxGeometry(.56, .06, .44), M.gold, 0, .03, 0, hopG);
 mesh(new THREE.BoxGeometry(.5, .62, .38), hopRed, 0, .37, 0, hopG);
@@ -1064,7 +1347,9 @@ const lanternGeo = window.DEN_LONG && (() => {
 })();
 const lanternGlassM = std(0xc0281c, { roughness: .4, emissive: 0xff2a10, emissiveIntensity: .55, transparent: true, opacity: .88, side: THREE.DoubleSide });
 const lanternWaxM = std(0xfff0d0, { roughness: .6, emissive: 0xffb050, emissiveIntensity: .6 });
-const lanterns = [[-3.4, 6.2, -.5], [3.4, 6.2, -.5], [-3.6, 6.5, 2.6], [3.6, 6.5, 2.6]].map(([x, y, z], i) => {
+// hai dãy đèn song song hai hàng cột, phía trong cột, ngang từng cột (trừ cột sát tường); treo cao gần trần
+const LANTERN_X = PILLAR_X - 2.4, LANTERN_Y = CEIL - 2.6;
+const lanterns = PILLAR_ZS.slice(1).flatMap(z => [[-LANTERN_X, LANTERN_Y, z], [LANTERN_X, LANTERN_Y, z]]).map(([x, y, z], i) => {
   const pivot = group(x, CEIL, z); const g = group(0, y - CEIL, 0, pivot);
   if (lanternGeo){
     const m = group(0, -LANTERN_MID * LANTERN_S, 0, g); m.scale.setScalar(LANTERN_S);
@@ -1085,17 +1370,17 @@ const lanterns = [[-3.4, 6.2, -.5], [3.4, 6.2, -.5], [-3.6, 6.5, 2.6], [3.6, 6.5
 /* ================= Ánh sáng ================= */
 scene.add(new THREE.HemisphereLight(0xffd9a8, 0x2a1005, .45));
 const spot = new THREE.SpotLight(0xffd8a0, 45, 16, .55, .6, 1.6);
-spot.position.set(0, 7, 4.2); spot.target.position.set(0, 1.2, 0);
+spot.position.set(0, 7, 4.2 + FRONT_Z); spot.target.position.set(0, 1.2, FRONT_Z);
 spot.castShadow = true; spot.shadow.mapSize.set(1024, 1024); spot.shadow.bias = -.0005;
 scene.add(spot, spot.target);
 // đèn rọi hai tượng
-const statueSpot = new THREE.SpotLight(0xffe2b0, 50, 16, .8, .7, 1.6);
-statueSpot.position.set(0, 9.4, 1.5); statueSpot.target.position.set(0, 4, -4.8);
+const statueSpot = new THREE.SpotLight(0xffe2b0, 60, 22, .8, .7, 1.6);
+statueSpot.position.set(0, 15, 2.5); statueSpot.target.position.set(0, 6, -5.3);
 scene.add(statueSpot, statueSpot.target);
 scene.traverse(o => { if (o.isMesh && !o.material.isMeshBasicMaterial){ o.castShadow = o.receiveShadow = true } });
 
 /* ================= Khói hương ================= */
-const smoke = Array.from({ length: 180 }, () => {
+const smoke = Array.from({ length: 480 }, () => {   // đủ cho khói của cả 5 lư hương (lư hương phụ toả thưa)
   const sp = sprite(smokeTex, 0xd8d2c8, false); sp.visible = false; scene.add(sp);
   return { sp, age: 0, life: 1, vx: 0, vy: 0, seed: 0, alive: false };
 });
@@ -1221,12 +1506,12 @@ function startOffering(){
   if (offering) return;
   offering = true;
   const mix = pickFlowerMix(), used = new Set();
-  const old = [...bouquets, ...plates, tea].filter(o => o.visible);
+  const old = [...bouquets, ...plates, ...teas].filter(o => o.visible);
   old.forEach(o => tween(.35, k => o.scale.setScalar(Math.max(.001, 1 - k)), () => { o.visible = false }));
   const t0 = old.length ? 450 : 0;
   setTimeout(() => { bouquets.forEach(b => { fillBouquet(b, mix); popIn(b) }); toast('Dâng hoa ' + mix.map(k => FLOWER_TYPES[k].name).join(', ') + ' 🌸') }, t0);
   setTimeout(() => { plates.forEach(p => { fillPlate(p, used); popIn(p) }); toast('Dâng mâm quả: ' + [...used].map(k => FRUIT_NAMES[k]).join(', ') + ' 🍑') }, t0 + 1200);
-  setTimeout(() => { popIn(tea); toast('Dâng chén trà thơm 🍵') }, t0 + 2400);
+  setTimeout(() => { teas.forEach(popIn); toast('Dâng chén trà thơm 🍵') }, t0 + 2400);
   setTimeout(() => {
     candles.forEach(c => setCandle(c, true));
     const added = markIncenseDay();
@@ -1410,7 +1695,7 @@ document.querySelectorAll('#bar button[data-act]').forEach(b => b.onclick = () =
 
 /* ================= Click / hover trên cảnh 3D ================= */
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-const clickables = [bowlG, ...candles.map(c => c.g), ...candelabras.map(c => c.g), bellG, moG, xamG, hopG];
+const clickables = [...bowls, ...candles.map(c => c.g), ...candelabras.map(c => c.g), bellG, moG, xamG, hopG];
 const labels = { incense: 'Bát hương — chạm để thắp hương', congduc: 'Hòm công đức — chạm để công đức', xam: 'Ống xăm Quan Âm — chạm để xin xăm', candle: 'Đèn nến — chạm để thắp / tắt', candle7: 'Giá nến 7 ngọn — mỗi ngày dâng hương sáng thêm một ngọn', bell: 'Chuông gia trì — chạm để thỉnh chuông', mo: 'Mõ — chạm để gõ' };
 function pick(e){
   const r = renderer.domElement.getBoundingClientRect();
@@ -1507,7 +1792,7 @@ renderer.setAnimationLoop(() => {
       st.glow.material.opacity = .75 + .25 * Math.sin(t * 13 + i * 2);
     });
     emitAcc += dt;
-    while (emitAcc > .09){ emitAcc -= .09; sticks.forEach(st => { if (st.ember.visible){ st.ember.getWorldPosition(tmpV); emit(tmpV) } }) }
+    while (emitAcc > .09){ emitAcc -= .09; sticks.forEach(st => { if (st.ember.visible && Math.random() < st.smoke){ st.ember.getWorldPosition(tmpV); emit(tmpV) } }) }
     const left = Math.ceil(BURN - inc.t);
     if (left !== lastSec){ lastSec = left; $('#timer').textContent = `Hương còn cháy ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` }
     if (p >= 1){

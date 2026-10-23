@@ -1,9 +1,9 @@
 // Lưu sẵn web vào máy để mở được cả khi không có mạng
-const CACHE = 'cat-tuong-tu-v14';
+const CACHE = 'cat-tuong-tu-v24';
 const ASSETS = [
   './', 'index.html', 'thap-huong-3d.html', 'manifest.json', 'pwa.js',
   'fonts/thu-phap.css', 'images/chinh-dien-5.webp', 'images/dien-phat.jpg', 'images/ban-tho.jpg', 'images/textures.js',
-  'lib/three.min.js', 'lib/OrbitControls.js', 'lib/RoomEnvironment.js', 'data/xam-quan-am.js', 'data/tuong-quan-am.js', 'data/tuong-phat.js', 'data/gia-nen.js', 'data/gia-nen-7.js', 'data/den-long.js', 'data/den-sen.js', 'data/hoa-sen.js', 'images/qr-cong-duc.jpg', 'images/chinh-dien-thien-phat.webp', 'images/tran-nha.jpg',
+  'lib/three.min.js', 'lib/OrbitControls.js', 'lib/RoomEnvironment.js', 'data/xam-quan-am.js', 'data/tuong-quan-am.js', 'data/tuong-phat.js', 'data/gia-nen.js', 'data/gia-nen-7.js', 'data/den-long.js', 'data/den-sen.js', 'data/ban-tho.js', 'data/ban-xam.js', 'data/dai-sen.js', 'data/binh-hoa.js', 'data/binh-lon.js', 'data/de-su-tu.js', 'data/hoa-sen.js', 'images/qr-cong-duc.jpg', 'images/chinh-dien-thien-phat.webp', 'images/tran-nha.jpg', 'images/cuc-lac.jpg', 'images/van-thu.jpg', 'images/pho-hien.jpg', 'images/cot-rong.jpg',
   'icons/icon-192.png', 'icons/icon-512.png'
 ];
 
