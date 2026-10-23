@@ -187,7 +187,7 @@
     <div class="xam-actions"><button id="xamAgain">Xin quẻ khác</button><button class="alt" id="xamOk">Đóng</button></div>
   </div>
 </div>
-<audio id="bgm" src="audio/nhac-nen.mp3" loop preload="auto"></audio>
+<audio id="bgm" src="audio/nhac-nen.mp3" loop preload="metadata"></audio>
 
 <div class="intro" id="intro">
   <div>
@@ -203,7 +203,11 @@
 <script>
   addEventListener('error', () => { if (!window.__ok) document.getElementById('err').hidden = false });
 </script>
-<script src="images/textures.js"></script>
+<script>
+  // ảnh nhúng sẵn (3.7MB) chỉ cần khi mở thẳng file trên máy (file:// không cho WebGL đọc ảnh rời);
+  // chạy trên web thì ảnh tải bình thường từ thư mục images/
+  if (location.protocol === 'file:') document.write('<script src="images/textures.js"><\/script>');
+</script>
 <script src="lib/three.min.js"></script>
 <script src="lib/OrbitControls.js"></script>
 <script src="lib/RoomEnvironment.js"></script>
@@ -253,8 +257,8 @@ scene.fog = new THREE.Fog(0x120804, 25, 52);
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
 const camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.05, 80);
-const CAM_START = new THREE.Vector3(0, 4.4, 22.5), CAM_END = new THREE.Vector3(0, 4.1, 15.5);
-const TGT_START = new THREE.Vector3(0, 4.8, -3), TGT_END = new THREE.Vector3(0, 4, -1.5);
+const CAM_START = new THREE.Vector3(0, 3.2, 22.5), CAM_END = new THREE.Vector3(0, 3.4, 17.5);
+const TGT_START = new THREE.Vector3(0, 5.4, -3), TGT_END = new THREE.Vector3(0, 4.8, -1.5);
 camera.position.copy(CAM_START);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.copy(TGT_START);
@@ -788,13 +792,21 @@ const censers = ALTARS.map(censer);
 const SIDE_SMOKE = .3;
 const bowls = censers.map(c => c.bowlG), sticks = censers.flatMap((c, i) => c.sticks.map(st => Object.assign(st, { smoke: i ? SIDE_SMOKE : 1 })));
 
-// hình khối mô hình nhúng sẵn (base64): pos Float32 xyz, idx Uint32, uv Float32 (nếu có)
+// hình khối mô hình nhúng sẵn (base64): pos xyz, uv (nếu có), idx.
+// Bản nén: pos/uv 'Q|min…,max…|b64' = Uint16 lượng tử theo khung bao từng thành phần; idx 'S|b64' = Uint16.
+// Chuỗi không có tiền tố là bản gốc Float32 / Uint32.
 function modelGeo(data){
   const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer;
+  const floats = (s, n) => {
+    if (!s.startsWith('Q|')) return new Float32Array(b64(s));
+    const [, head, body] = s.split('|'), mm = head.split(',').map(Number), q = new Uint16Array(b64(body)), f = new Float32Array(q.length);
+    for (let i = 0; i < q.length; i++){ const k = i % n; f[i] = mm[k] + q[i] / 65535 * (mm[n + k] - mm[k]) }
+    return f;
+  };
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(b64(data.pos)), 3));
-  if (data.uv) geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(b64(data.uv)), 2));
-  geo.setIndex(new THREE.BufferAttribute(new Uint32Array(b64(data.idx)), 1));
+  geo.setAttribute('position', new THREE.BufferAttribute(floats(data.pos, 3), 3));
+  if (data.uv) geo.setAttribute('uv', new THREE.BufferAttribute(floats(data.uv, 2), 2));
+  geo.setIndex(new THREE.BufferAttribute(data.idx.startsWith('S|') ? new Uint16Array(b64(data.idx.slice(2))) : new Uint32Array(b64(data.idx)), 1));
   geo.computeVertexNormals();
   return geo;
 }

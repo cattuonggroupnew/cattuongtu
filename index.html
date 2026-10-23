@@ -54,34 +54,26 @@
   @keyframes petal{8%{opacity:.95}90%{opacity:.8}100%{opacity:0;transform:translate(var(--dx),105vh) rotate(600deg)}}
   .lunar{position:absolute;top:80px;left:16px;z-index:4;display:inline-block;border:1px solid var(--gold);color:var(--gold-2);padding:6px 18px;border-radius:30px;font-size:.9rem;background:#000a;text-align:center}
   .gate{position:relative;z-index:2;width:min(100vw,calc((100vh - 90px) * 1.1831));aspect-ratio:840/710;cursor:pointer;outline:none;
-    transform-origin:50% 64.4%;transition:transform 1.6s cubic-bezier(.5,0,.2,1);filter:drop-shadow(0 14px 20px #0005)}
+    filter:drop-shadow(0 14px 20px #0005)}
   .gate:focus-visible{outline:2px dashed var(--gold-2);outline-offset:8px}
   .gate-art{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
   .doorway{position:absolute;left:38.0952%;top:41.4085%;width:23.8095%;height:45.9155%;perspective:900px;overflow:hidden;background:#120804;border-radius:50% 50% 0 0/20.25% 20.25% 0 0}
   .doorway::after{content:"";position:absolute;z-index:3;left:50%;top:6%;bottom:0;width:2px;margin-left:-1px;
-    background:linear-gradient(transparent,#ffe2a0 25%,#ffb94a 85%,transparent);box-shadow:0 0 14px 4px #ffb94a88;animation:breathe 2.4s infinite;transition:opacity .4s}
-  .gate.open .doorway::after{opacity:0;animation:none}
-  .inside{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#ffd27a99,transparent 60%),url(images/chinh-dien-5.webp) 56% 30%/cover;filter:brightness(.4);transition:filter 1.6s}
-  .door{position:absolute;z-index:2;top:0;bottom:0;width:50%;transition:transform 1.8s cubic-bezier(.55,0,.25,1),filter .3s}
+    background:linear-gradient(transparent,#ffe2a0 25%,#ffb94a 85%,transparent);box-shadow:0 0 14px 4px #ffb94a88;animation:breathe 2.4s infinite}
+  .inside{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#ffd27a99,transparent 60%),url(images/chinh-dien-5.webp) 56% 30%/cover;filter:brightness(.4)}
+  .door{position:absolute;z-index:2;top:0;bottom:0;width:50%;transition:filter .3s}
   .door svg{display:block;width:100%;height:100%}
   .door.l{left:0;transform-origin:left center}
   .door.r{right:0;transform-origin:right center}
   .door.r svg{transform:scaleX(-1)}
   .gate:hover .door{filter:brightness(1.15)}
-  .gate.open .door.l{transform:rotateY(80deg)}
-  .gate.open .door.r{transform:rotateY(-80deg)}
-  .gate.open .inside{filter:brightness(1.1)}
-  .spill{opacity:0;transition:opacity 1.6s}
-  .gate.open .spill{opacity:.9}
+  .spill{opacity:0}
   .lantern{transform-box:view-box;animation:swing 3.2s ease-in-out infinite alternate}
   .lantern.b{animation-delay:-1.6s}
   @keyframes swing{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
   .lantern .halo{animation:breathe 2.4s infinite}
-  .gate.enter{transform:scale(3)}
   .gate-hint{position:absolute;left:0;right:0;bottom:30px;z-index:4;padding:0 16px;font-family:'Thu Phap Cat Tuong',cursive;font-weight:700;font-size:clamp(1.3rem,3vw,1.8rem);color:#fff4d8;text-align:center;text-shadow:0 2px 8px #3a1a0a,0 0 2px #3a1a0a;animation:breathe 2.4s infinite}
   @keyframes breathe{50%{opacity:.55}}
-  .veil{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0;transition:opacity 1s;background:radial-gradient(circle,#fff3d0,#f3d27a 35%,#1a0d05 80%)}
-  .veil.on{opacity:1}
   .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:40px;font-weight:600;cursor:pointer;border:0;font-size:1rem;transition:.25s;font-family:inherit}
   .btn-gold{background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#3a1d05;box-shadow:0 6px 24px #d4a73a55}
   .btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 30px #d4a73a88}
@@ -360,7 +352,6 @@
   <p class="gate-hint">Chạm vào cổng để vào chánh điện thắp hương</p>
   <a href="#cau-nguyen" class="scroll-hint">⌄</a>
 </section>
-<div class="veil" id="veil"></div>
 
 <!-- LỜI PHẬT DẠY -->
 <div class="quote">
@@ -417,7 +408,7 @@
 </footer>
 
 <div class="toast" id="toast"></div>
-<audio id="bgm" src="audio/nhac-nen.mp3" loop preload="auto"></audio>
+<audio id="bgm" src="audio/nhac-nen.mp3" loop preload="metadata"></audio>
 <button class="music" id="musicBtn" title="Nhạc nền">🔇</button>
 
 <script>
@@ -456,22 +447,12 @@ $('#yr').textContent = new Date().getFullYear();
   addEventListener('pagehide', () => { try{ sessionStorage.setItem('bgmTime', bgm.currentTime) }catch(e){} });
 })();
 
-// Cổng chùa: mở hai cánh cửa rồi vào thẳng chánh điện 3D
+// Cổng chùa: chạm là vào thẳng chánh điện 3D (bỏ cảnh mở cửa cổng; chánh điện tự chạy cảnh đi vào)
 (function(){
-  const gate = $('#gate'), veil = $('#veil');
-  let busy = false;
-  const open = () => {
-    if (busy) return; busy = true;
-    bell();
-    gate.classList.add('open');
-    setTimeout(() => gate.classList.add('enter'), 1300);
-    setTimeout(() => veil.classList.add('on'), 2000);
-    setTimeout(() => location.href = 'thap-huong-3d.html?vao=1', 3000);
-  };
+  const gate = $('#gate');
+  const open = () => { location.href = 'thap-huong-3d.html?vao=1' };
   gate.onclick = open;
   gate.onkeydown = e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open() } };
-  // Bấm "quay lại" từ chánh điện: đóng cổng như cũ
-  addEventListener('pageshow', e => { if (e.persisted){ busy = false; gate.classList.remove('open', 'enter'); veil.classList.remove('on') } });
 })();
 
 // Chữ thư pháp trên cổng: co lại nếu rộng hơn khung

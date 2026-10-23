@@ -1,9 +1,10 @@
-// Lưu sẵn web vào máy để mở được cả khi không có mạng
-const CACHE = 'cat-tuong-tu-v24';
+// Lưu web vào máy để mở được cả khi không có mạng.
+// Lúc cài chỉ lưu sẵn phần khung nhẹ; mẫu 3D, ảnh, nhạc (hàng chục MB) được lưu dần khi trang thật sự tải tới
+// (xem 'fetch' bên dưới) — tránh bắt máy người xem tải hết một lúc ngay lần đầu vào.
+const CACHE = 'cat-tuong-tu-v25';
 const ASSETS = [
   './', 'index.html', 'thap-huong-3d.html', 'manifest.json', 'pwa.js',
-  'fonts/thu-phap.css', 'images/chinh-dien-5.webp', 'images/dien-phat.jpg', 'images/ban-tho.jpg', 'images/textures.js',
-  'lib/three.min.js', 'lib/OrbitControls.js', 'lib/RoomEnvironment.js', 'data/xam-quan-am.js', 'data/tuong-quan-am.js', 'data/tuong-phat.js', 'data/gia-nen.js', 'data/gia-nen-7.js', 'data/den-long.js', 'data/den-sen.js', 'data/ban-tho.js', 'data/ban-xam.js', 'data/dai-sen.js', 'data/binh-hoa.js', 'data/binh-lon.js', 'data/de-su-tu.js', 'data/hoa-sen.js', 'images/qr-cong-duc.jpg', 'images/chinh-dien-thien-phat.webp', 'images/tran-nha.jpg', 'images/cuc-lac.jpg', 'images/van-thu.jpg', 'images/pho-hien.jpg', 'images/cot-rong.jpg',
+  'fonts/thu-phap.css', 'lib/three.min.js', 'lib/OrbitControls.js', 'lib/RoomEnvironment.js',
   'icons/icon-192.png', 'icons/icon-512.png'
 ];
 
