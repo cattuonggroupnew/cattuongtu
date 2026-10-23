@@ -1,9 +1,9 @@
 // Lưu web vào máy để mở được cả khi không có mạng.
 // Lúc cài chỉ lưu sẵn phần khung nhẹ; mẫu 3D, ảnh, nhạc (hàng chục MB) được lưu dần khi trang thật sự tải tới
 // (xem 'fetch' bên dưới) — tránh bắt máy người xem tải hết một lúc ngay lần đầu vào.
-const CACHE = 'cat-tuong-tu-v25';
+const CACHE = 'cat-tuong-tu-v26';
 const ASSETS = [
-  './', 'index.html', 'thap-huong-3d.html', 'manifest.json', 'pwa.js',
+  './', 'index.html', 'trang-chu.html', 'thap-huong-3d.html', 'manifest.json', 'pwa.js',
   'fonts/thu-phap.css', 'lib/three.min.js', 'lib/OrbitControls.js', 'lib/RoomEnvironment.js',
   'icons/icon-192.png', 'icons/icon-512.png'
 ];
